@@ -1,0 +1,79 @@
+#! /bin/bash
+
+
+if [[ $1 == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/cleanup.md
+  exit
+fi
+
+# Root check
+if [[ $(whoami) != "root" ]]
+then
+  echo 'This script needs to run as root! Please use "sudo" in front.'
+  exit
+fi
+
+function Execute
+{
+  ALimg=$(dpkg --list | grep linux-image | awk '{ print $2 }' | sort -V)
+  CLimg="linux-image-$(uname -r)"
+  for i in $ALimg
+  do
+    if [[ $i == $CLimg ]]
+    then
+      break
+    fi
+    PLimg=$i
+  done
+
+  echo ''
+  echo ''
+  echo "Currently used linux image: $CLimg"
+  echo "Previous linux image: $PLimg"
+
+  if [[ $1 == '-a' ]]
+  then
+    BreakAt=$CLimg
+  else
+    BreakAt=$PLimg
+  fi
+
+  for i in $ALimg
+  do
+    if [[ $i == $BreakAt ]]
+    then
+      break
+    fi
+    RLimg=$i
+    RLhdr="linux-headers$(sed 's/linux-image//' <<< "$i")"
+    echo ''
+    echo ''
+    echo "Removing: $i linux-image and header"
+    apt-get -y purge $RLimg
+    apt-get -y purge $RLhdr
+  done
+
+  rm -rf /tmp/*
+  apt-get -y autoremove
+  apt-get clean
+  echo ''
+  echo 'Done!'
+  echo ''
+  echo ''
+}
+
+# This will prevent regular users from permanently removing previous linux images and headers even though they can remove them in Volatile mode... (This script is executed at startup in Volatile mode automatically.)
+if [[ $(volatizer-mode) != "Volatile" ]]
+then
+  if [[ -z $(grep 'sudo' /etc/group | grep $SUDO_USER) ]]
+  then
+    echo 'Sorry you are not in group "sudo", you can only execute this script in Volatile mode.'
+    sleep 5
+    exit
+  else
+    Execute
+  fi
+else
+  Execute
+fi

@@ -1,0 +1,91 @@
+#! /bin/bash
+
+
+if [[ $1 == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/sudoers.md
+  exit
+fi
+echo ''
+
+# Root check
+if [[ $(whoami) != "root" ]]
+then
+  echo 'This script needs to run as root! Please use "sudo" or "pkexec" in front.'
+  exit
+fi
+
+function Message
+{
+  echo ''
+  echo 'Done!'
+  echo 'If for some reason sudoers can not be parsed, and sudo command does not work, you can use "pkexec nano /etc/sudoers.d/Volatizer-sudoers" command to correct it.'
+  echo ''
+}
+
+if [[ $1 == "-l" ]]
+then
+  cat /etc/sudoers.d/Volatizer-sudoers
+  echo ''
+  exit
+fi
+
+if [[ $1 == "-r" ]]
+then
+  if [[ -z $2 ]]
+  then
+    echo ''
+    echo 'What do you want to remove?!'
+    echo ''
+  else
+    shift
+    echo ''
+    echo 'Remaining entries:'
+    LineNumber=1
+    touch /tmp/Volatizer-sudoers
+    for i in $(awk '{ print 1 }' /etc/sudoers.d/Volatizer-sudoers)
+    do
+      Line=$(awk -v LineNumber=${LineNumber} 'NR == LineNumber { print; exit }' /etc/sudoers.d/Volatizer-sudoers)
+      if [[ ${Line} != ${@} ]]
+      then
+        echo ${Line} | tee -a /tmp/Volatizer-sudoers
+      fi
+      LineNumber=$(( LineNumber + 1 ))
+    done
+    chmod 0440 /tmp/Volatizer-sudoers
+    rm -f /etc/sudoers.d/Volatizer-sudoers
+    cp -fa /tmp/Volatizer-sudoers /etc/sudoers.d
+    rm /tmp/Volatizer-sudoers
+  fi
+  echo ''
+  echo "Checking..."
+  visudo -c
+  Message
+  exit
+fi
+
+#Adding
+for i in $@
+do
+  if [[ $i != $1 ]]
+  then
+    if [[ -z $(grep "$1    ALL = (ALL) NOPASSWD: $i" /etc/sudoers.d/Volatizer-sudoers) ]]
+    then
+      echo "Adding:"
+      chown root:root $i
+      chmod 755 $i
+      chmod 755 /etc/sudoers.d/Volatizer-sudoers
+      echo "$1    ALL = (ALL) NOPASSWD: $i" | tee -a /etc/sudoers.d/Volatizer-sudoers
+      chmod 0440 /etc/sudoers.d/Volatizer-sudoers
+    else
+      echo ''
+      echo 'Entry already exists!'
+      echo ''
+      exit
+    fi
+  fi
+done
+echo ''
+echo "Checking..."
+visudo -c
+Message

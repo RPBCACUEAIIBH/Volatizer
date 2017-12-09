@@ -1,0 +1,4 @@
+BackupPartition: /dev/??? #Use UUID if it's a removable drive otherwise it may not find the drive or may find the wrong drive! Like this: UUID=18cbd232-fbff-468d-aab5-b9256eed8bef instead of: /dev/sda2
+BackupDirectory: /media/??? #Can't contain spaces!!! Please rename every directory that contains spaces... It also can't be inside /home/${USER} (the directory that is being backed up)!
+BackupSwitch: Off #By default this is off. Please double check partition, and directory, cause this has no error checking at the moment. Enable auto-backup by changing this value to "On".
+AutosaveFrequency: 60 #Defined in minutes. This is the default value even when the autosave.sh is not enabled but called by user.

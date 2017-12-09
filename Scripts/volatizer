@@ -1,0 +1,68 @@
+#! /bin/bash
+
+################################################################################
+# Volatizer                                                                    #
+################################################################################
+#                                                                              #
+# Version 1.0                                                                  #
+# Written by: Tibor Áser Veres                                                 #
+# Source: https://github.com/RPBCACUEAIIBH/Volatizer                           #
+# License: BSD License 2.0 (see LICENSE.md file)                               #
+#                                                                              #
+################################################################################
+
+# Volatizer is a collection of modules, multitude of scipts that have been added
+# over long development and testing. This script fuses them together.
+# A single command: "volatizer"! This is all a user has to remember to use them!
+
+if [[ $2 == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/$1
+  exit
+fi
+
+case $1 in
+  autosave ) shift
+             volatizer-autosave $@
+             ;;
+    backup ) shift
+             sudo volatizer-backup $@
+             ;;
+   cleanup ) shift
+             if [[ $(volatizer-mode) == "Volatile" ]]
+             then
+               sudo volatizer-cleanup -a
+             else
+               sudo volatizer-cleanup $@
+             fi
+             ;;
+      mode ) volatizer-mode
+             ;;
+    reboot ) sudo volatizer-save -R
+             ;;
+   recover ) shift
+             sudo volatizer-recover $@ # Admin only
+             ;;
+    reswap ) shift
+             sudo volatizer-reswap $@
+             ;;
+      save ) shift
+             sudo volatizer-save $@
+             ;;
+  shutdown ) sudo volatizer-save -S
+             ;;
+     sleep ) sudo volatizer-save -s
+             ;;
+   sudoers ) shift
+             sudo volatizer-sudoers $@ # Admin only
+             ;;
+ --version ) echo ''
+             echo 'Volatizer - Version 1.0'
+             echo ''
+             cat /usr/share/Volatizer/LICENSE.md
+             echo ''
+             exit
+             ;;
+         * ) cat /usr/share/Volatizer/HelpFiles/volatizer.md
+             ;;
+esac

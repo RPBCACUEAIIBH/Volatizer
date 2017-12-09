@@ -1,0 +1,49 @@
+#! /bin/bash
+
+
+if [[ $1 == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/recover.md
+  exit
+fi
+
+# Root check
+if [[ $(whoami) != "root" ]]
+then
+  echo 'This script needs to run as root! Please use "sudo" in front.'
+  exit
+fi
+
+if [[ $(volatizer-mode) == "Volatile" ]]
+then
+  if [[ $1 == "-t" ]]
+  then
+    echo ''
+    echo 'Please wait! This may take some time...'
+    tar -xpzf $2 -C /home
+    echo 'Done!'
+    echo 'Warning! Please avoid using volatizer-save in this session unless you specifically want to overwrite data on your drive!'
+  else
+    echo ''
+    echo 'Please wait! This may take some time...'
+    tar -xpzf $1 -C /home
+    mkdir /volatizertmp
+    mount $(grep "errors=remount-ro" /etc/fstab | awk '{ print $1 }') /volatizertmp
+    tar -xpzf $1 -C /volatizertmp/home
+    umount /volatizertmp
+    rmdir /volatizertmp
+    echo 'Done!'
+  fi
+else
+  if [[ $1 == "-t" ]]
+  then
+    echo ''
+    echo 'Warning! -t option only available in Volatile mode! Please reboot into Volatile mode and try again!'
+    echo 'Aborting...'
+  else
+    echo ''
+    echo 'Please wait! This may take some time...'
+    tar -xpzf $1 -C /home
+    echo 'Done!'
+  fi
+fi

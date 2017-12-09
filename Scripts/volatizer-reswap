@@ -1,0 +1,23 @@
+#! /bin/bash
+
+
+if [[ ${1} == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/reswap.md
+  exit
+fi
+
+# Root check
+if [[ $(whoami) != "root" ]]
+then
+  echo 'This script needs to run as root! Please use "sudo" in front.'
+  exit
+fi
+
+if [[ -z $1 ]]
+then
+  Swap=$(grep "swap" /etc/fstab | grep none | awk '{ print $1 }') # the first grep gets the comment as well, so the second one is needed to get the partition...
+else
+  Swap=$1
+fi
+swapoff $Swap && swapon $Swap

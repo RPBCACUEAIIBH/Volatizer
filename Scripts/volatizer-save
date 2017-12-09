@@ -1,0 +1,102 @@
+#! /bin/bash
+
+
+if [[ $1 == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/save.md
+  exit
+fi
+
+Order="None"
+
+if [[ $1 == "-s" ]]
+then
+  echo ''
+  echo 'System will go to sleep after saving!'
+  echo ''
+  Order="Sleep"
+  shift
+fi
+
+if [[ $1 == "-S" ]]
+then
+  echo ''
+  echo 'System will shut down after saving!'
+  echo ''
+  Order="Shutdown"
+  shift
+fi
+
+if [[ $1 == "-R" ]]
+then
+  echo ''
+  echo 'System will reboot after saving!'
+  echo ''
+  Order="Reboot"
+  shift
+fi
+
+# Root check
+if [[ $(whoami) != "root" ]]
+then
+  echo 'This script needs to run as root! Please use "sudo" in front.'
+  exit
+fi
+
+if [[ -z $1 ]]
+then
+  SaveUser=$SUDO_USER
+else
+  SaveUser=$1
+fi
+
+Wait=true
+while [[ $Wait == true ]] # If saving is in progress it will wait till it's done.
+do
+  if [[ -e /tmp/volatizer-saving ]]
+  then
+    echo 'Another saving process is in progress! Waiting...'
+    sleep 1 # Do not exit hire, let it save once again, it is possible that files have been modified during the current saving process...
+  else
+    Wait=false
+  fi
+done
+
+if [[ $(volatizer-mode) == "Volatile" ]]
+then
+  touch /tmp/volatizer-saving #The existence of this file means that a saving process is in progress, to avoid 2 saving process at the same time interfering.
+  BackupSwitch=$(grep "BackupSwitch:" /home/$SaveUser/.Volatizer/Config | awk '{ print $2 }')
+  if [[ $BackupSwitch == "On" ]]
+  then
+    sudo volatizer-backup -u $SaveUser
+  fi
+  echo ''
+  echo 'Saving! Please wait! This may take some time...'
+  mkdir /volatizertmp
+  mount $(grep "errors=remount-ro" /etc/fstab | awk '{ print $1 }') /volatizertmp
+  if [[ -z $(df | grep /volatizertmp) ]]
+  then
+    echo 'Error! System partition can not be mounted! It may be broken or removed... User data will not be saved!'
+  else
+  rm -R /volatizertmp/home/$SaveUser
+  cp -rfa /home/$SaveUser /volatizertmp/home
+  umount $(grep "errors=remount-ro" /etc/fstab | awk '{ print $1 }')
+  fi
+  rmdir /volatizertmp
+  rm /tmp/volatizer-saving
+  echo 'Done!'
+else
+  echo 'You are in Normal mode! Aborting...'
+  sleep 3
+fi
+
+case $Order in
+     Sleep ) systemctl suspend
+           ;;
+  Shutdown ) shutdown now
+           ;;
+    Reboot ) reboot
+           ;;
+          *) :
+           ;;
+esac

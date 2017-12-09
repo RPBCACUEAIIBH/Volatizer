@@ -1,0 +1,34 @@
+#! /bin/bash
+
+
+if [[ $1 == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/autosave.md
+  exit
+fi
+
+# Getting username
+if [[ -z $SUDO_USER ]]
+then
+  UserName=$USER
+else
+  UserName=$SUDO_USER
+fi
+
+if [[ -z $1 ]]
+then
+  Frequency=$(grep "AutosaveFrequency:" /home/$UserName/.Volatizer/Config | awk '{ print $2 }')
+else
+  Frequency=$1
+fi
+
+while [[ $a != "Done" ]]
+do
+  sudo volatizer-save $UserName
+  for i in $(seq 0 $Frequency)
+  do
+    clear
+    echo "Saving in: $(( $Frequency - $i )) minutes."
+    sleep 60
+  done
+done

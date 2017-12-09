@@ -1,0 +1,33 @@
+#! /bin/bash
+
+
+if [[ $1 == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/mode.md
+  exit
+fi
+
+Mode="Normal"
+
+MPN=0
+for i in $(df | awk '{ print $1 }')
+do
+  MPN=$(( MPN + 1 ))
+done
+MPN=$(( MPN - 1 ))
+
+MP=$(df | awk '{ print $6 }')
+FST=$(df | awk '{ print $1 }')
+
+for i in $(seq $MPN)
+do
+  if [[ $(echo $MP | awk -v i=${i} '{ print $i }') == "/" ]]
+  then
+    if [[ $(echo $FST | awk -v i=${i} '{ print $i }') == "tmpfs" ]]
+    then
+      Mode="Volatile"
+    fi
+  fi
+done
+
+echo $Mode

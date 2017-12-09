@@ -1,0 +1,102 @@
+#! /bin/bash
+
+
+while [[ ! -z $1 ]]
+do
+  case $1 in
+    --help ) cat /usr/share/Volatizer/HelpFiles/backup.md
+             exit
+             ;;
+        -u ) shift
+             BackupUser=$1
+             shift
+             ;;
+         * ) BackupDirectory=$1
+             shift
+             ;;
+  esac
+done
+
+if [[ -z $BackupUser ]]
+then
+  BackupUser=$SUDO_USER
+fi
+
+# Root check
+if [[ $(whoami) != "root" ]]
+then
+  echo 'This script needs to run as root! Please use "sudo" in front.'
+  exit
+fi
+
+function DoBackup
+{
+  if [[ $(/usr/local/bin/volatizer-mode) == 'Volatile' ]]
+  then
+    echo ''
+    echo 'Making backup! Please wait! This may take some time...'
+    mkdir /volatizertmp
+    mount $(grep "errors=remount-ro" /etc/fstab | awk '{ print $1 }') /volatizertmp
+    cd /volatizertmp/home
+    tar -cpzf $BackupDirectory/${BackupUser}Backup.tar.gz $BackupUser
+    cd ~
+    umount /volatizertmp
+    rmdir /volatizertmp
+    echo 'Done!'
+  else
+    echo ''
+    echo 'Making backup! Please wait! This may take some time...'
+    cd /home
+    tar -cpzf $BackupDirectory/${BackupUser}Backup.tar.gz $BackupUser
+    cd ~
+    echo 'Done!'
+  fi
+}
+
+if [[ -z $BackupDirectory ]]
+then
+  BP=$(grep "BackupPartition:" /home/$BackupUser/.Volatizer/Config | awk '{ print $2 }')
+  if [[ ${BP:0:4} == "UUID" ]]
+  then
+    BackupPartition=$(findmnt -rn -S $BP -o SOURCE)
+  else
+    BackupPartition=$BP
+  fi
+  BackupDirectory=$(grep "BackupDirectory:" /home/$BackupUser/.Volatizer/Config | awk '{ print $2 }')
+  Fail=false
+  if [[ $BackupPartition == "/dev/???" ]]
+  then
+    echo 'Please configure BackupPartition in the config file!'
+    Fail=true
+  fi
+  if [[ $BackupDirectory == "/media/???" ]]
+  then
+    echo 'Please configure BackupDirectory in the config file!'
+    Fail=true
+  fi
+  if [[ $Fail == true ]]
+  then
+    sleep 10 # give time for the user to read errors before exitting...
+    exit
+  fi
+  if [[ -z $(df | grep $BackupPartition) ]]
+  then
+    mount $BackupPartition
+    if [[ -d $(df | grep $BackupDirectory) ]]
+    then
+      echo 'Error! Backup directory is not found on the given location! The wrong path may be given, or the drive could not be mounted... (Backup will not be created!)'
+    else
+      DoBackup
+      umount $BackupPartition
+    fi
+  else
+    if [[ -d $(df | grep $BackupDirectory) ]]
+    then
+      echo 'Error! Backup directory is not found on the given location! The wrong path may be given, or the drive could not be mounted... (Backup will not be created!)'
+    else
+      DoBackup
+    fi
+  fi
+else
+  DoBackup
+fi
