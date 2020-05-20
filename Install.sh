@@ -114,8 +114,6 @@ then
     if [[ -d /home/$i/.Volatizer ]]
     then
       rm -Rf /home/$i/.Volatizer
-      rm -Rf /home/$i/Notice
-      cp -fa /home/$i/.bashrc.old /home/$i/.bashrc
     fi
   done
   if [[ -d $Files ]]
