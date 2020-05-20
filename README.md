@@ -31,6 +31,8 @@ Known issues and workarounds:
 - If your PC fails to boot into volatile mode, try normal mode... If it runs out of ram it won't boot, since the swap is mounted after the root partition, which means that even if you're able to overfill it, it can't use swap at boot! Solution: move over your data to another partition, then try again! (Be aware that other users can also fill up the system partition quickly causing it to not boot into volatile mode!)
 
 Supported distros(Volatizer for these are all tested and working):
+Debian 10 Buster (As of V1.1)
+Ubuntu 18.04
 Ubuntu 16.04 and 17.04 (both Desktop and Server)
 Ubuntu MATE 16.04 and 17.04
 Ubuntu Gnome 16.04 and 17.04
@@ -41,7 +43,6 @@ Linux Mint 18.2 (Cinemon, Mate, KDE)
 (Please note that I've tested it a few months earlyer, on all these distros, when I initially wanted to release, before cleaning up the code and fixing some issues... I can not guarantee that it still works on all of these... Currently I'm using it on Ubuntu Gnome 17.04 with latest updates applied!)
 
 Known NOT supported distros(Tested but not compatible with the current version of Volatizer):
-Debian - little difference, support may be added in future, but I need another PC for that... debian doesn't likes my old PC's integrated graphics... :(
 Fedora
 Slackware
 
@@ -71,5 +72,8 @@ Update plans:
 - Newuser - Makes creating new users easy (sub-version)
 - Statrup - A script that runs at startup launching autosave and does cleanup, + allows you to do whatever you want automatically at startup (sub-version)
 - Logging - Curently none of volatizer files are logging anything... (sub-version)
-- Compatibility for Debian and debian based systems (sub-version/next version will see)
 - Remote mode switching - fix for the mode switching issue (major change... probably next version)
+
+What's new:
+Version 1.1
+- Added Debian compatibility.(requested by: pe3no)

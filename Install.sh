@@ -4,7 +4,7 @@
 # Volatizer                                                                    #
 ################################################################################
 #                                                                              #
-# Version 1.0                                                                  #
+# Version 1.1                                                                  #
 # Written by: Tibor Áser Veres                                                 #
 # Source: https://github.com/RPBCACUEAIIBH/Volatizer                           #
 # License: BSD License 2.0 (see LICENSE.md file)                               #
@@ -44,14 +44,14 @@ else
 fi
 
 # Compatibility check
-if [[ -z $(grep 'mount ${roflag} ${FSTYPE:+-t ${FSTYPE} }${ROOTFLAGS} ${ROOT} ${rootmnt}' /usr/share/initramfs-tools/scripts/local) ]]
+if [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t ${FSTYPE} }${ROOTFLAGS} ${ROOT} ${rootmnt}' /usr/share/initramfs-tools/scripts/local) || ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
 then
+  echo 'Compatibility check >> OK'
+  echo ''
+else
   echo 'Compatibility check >> Failed! Please choose another distro...'
   echo ''
   Fail=true
-else
-  echo 'Compatibility check >> OK'
-  echo ''
 fi
 
 # Mode check
@@ -95,7 +95,7 @@ then
   fi
   if [[ -f /etc/sudoers.d/Volatizer-sudoers ]]
   then
-    rm -f /etc/sudoers.d/volatizer-sudoers
+    rm -f /etc/sudoers.d/Volatizer-sudoers
   fi
 ###
   for i in $(ls $Command/volatizer*)
@@ -186,6 +186,41 @@ echo ''
 echo ''
 echo 'Making changes to initramfs'
 cp /usr/share/initramfs-tools/scripts/local /usr/share/initramfs-tools/scripts/local.old
+if [[ ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
+then
+L0='        '
+L1='        ### Volatizer modification starts ###'
+L2='        read -t 10 -p "Do you want to boot normally? (enter Y if so...)" Yy'
+L3='        case $Yy in'
+L4='          [Yy]* ) clear'
+L5='                  echo "Starting in Normal mode!"'
+L61='                  if ! mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"'
+L62='                  then'
+L63='                    MountFail=true'
+L64='                  else'
+L65='                    MountFail=false'
+L66='                  fi'
+L7='                  ;;'
+L8='               *) clear'
+L9='                  echo "Starting in Volatile mode! Please wait! This may take 10-15 minutes."'
+L10='                  mount -t tmpfs -o rw,noatime,nodiratime,size=100% tmpfs "${rootmnt?}"' # Mounting available RAM to ${rootmnt}
+L11='                  mkdir /volatizertmp'
+L121='                  if ! mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"}${ROOTFLAGS} "${ROOT}" "/volatizertmp"'
+L122='                  then'
+L123='                    MountFail=true'
+L124='                  else'
+L125='                    MountFail=false'
+L13='                     cp -rfa /volatizertmp/* "${rootmnt?}"'
+L14='                     umount /volatizertmp'
+L15='                     rm /volatizertmp'
+L126='                  fi'
+L16='                  ;;'
+L17='        esac'
+L18='        if [[ $MountFail == true ]]'
+L19='        then'
+L20='        ### End of Volatizer modifications ###'
+sed -i "/if ! mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"; then/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L61\n$L62\n$L63\n$L64\n$L65\n$L66\n$L7\n$L8\n$L9\n$L10\n$L11\n$L121\n$L122\n$L123\n$L124\n$L125\n$L13\n$L14\n$L15\n$L126\n$L16\n$L17\n$L18\n$L19\n$L20" /usr/share/initramfs-tools/scripts/local
+else
 L0='        '
 L1='        ### Volatizer modification starts ###'
 L2='        read -t 10 -p "Do you want to boot normally? (enter Y if so...)" Yy'
@@ -207,6 +242,7 @@ L17='        esac'
 L18='        ### End of Volatizer modifications ###'
 L19='        '
 sed -i "/mount \${roflag} \${FSTYPE:+-t \${FSTYPE} }\${ROOTFLAGS} \${ROOT} \${rootmnt}/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18\n$L19" /usr/share/initramfs-tools/scripts/local
+fi
 echo ''
 echo 'Done!'
 echo ''
