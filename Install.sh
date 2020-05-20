@@ -74,7 +74,7 @@ then
   exit
 fi
 
-if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) ]]
+if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) || ! -z $(grep '### End of Volatizer modifications ###' /usr/share/initramfs-tools/scripts/local) ]]
 then
   echo 'Warning! Previous volatizer installation detected. Attempting to clean up...'
   if [[ -f /etc/default/grub.old ]]
@@ -224,7 +224,8 @@ then
 
 
 L0='        '
-L1='        ### Volatizer modification starts ###'
+L011='        ### Volatizer modification starts ###'
+L012='        sleep 5 # Let the messages end cause it is easy to miss the prompt among the messages... :-/'
 L2='        read -t 10 -p "Do you want to boot normally? (enter Y if so...)" Yy'
 L3='        case $Yy in'
 L4='          [Yy]* ) clear'
@@ -242,7 +243,7 @@ L15='                  rm /volatizertmp'
 L16='                  ;;'
 L17='        esac'
 L18='        ### End of Volatizer modifications ###'
-sed -i "/mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18" /usr/share/initramfs-tools/scripts/local
+sed -i "/mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"/ c\\$L0\n$L011\n$L012\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18" /usr/share/initramfs-tools/scripts/local
 
 
 
