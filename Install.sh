@@ -44,7 +44,7 @@ else
 fi
 
 # Compatibility check
-if [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t ${FSTYPE} }${ROOTFLAGS} ${ROOT} ${rootmnt}' /usr/share/initramfs-tools/scripts/local) || ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
+if [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t ${FSTYPE} }${ROOTFLAGS} ${ROOT} ${rootmnt}' /usr/share/initramfs-tools/scripts/local) || ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"' /usr/share/initramfs-tools/scripts/local) || ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
 then
   echo 'Compatibility check >> OK'
   echo ''
@@ -184,7 +184,7 @@ echo ''
 echo ''
 echo 'Making changes to initramfs'
 cp /usr/share/initramfs-tools/scripts/local /usr/share/initramfs-tools/scripts/local.old
-if [[ ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
+if [[ ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]] # Debian
 then
 L0='        '
 L1='        ### Volatizer modification starts ###'
@@ -218,7 +218,35 @@ L18='        if [[ $MountFail == true ]]'
 L19='        then'
 L20='        ### End of Volatizer modifications ###'
 sed -i "/if ! mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"; then/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L61\n$L62\n$L63\n$L64\n$L65\n$L66\n$L7\n$L8\n$L9\n$L10\n$L11\n$L121\n$L122\n$L123\n$L124\n$L125\n$L13\n$L14\n$L15\n$L126\n$L16\n$L17\n$L18\n$L19\n$L20" /usr/share/initramfs-tools/scripts/local
-else
+else if [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"' /usr/share/initramfs-tools/scripts/local) ]] # Ubuntu 20.04+
+then
+
+
+
+L0='        '
+L1='        ### Volatizer modification starts ###'
+L2='        read -t 10 -p "Do you want to boot normally? (enter Y if so...)" Yy'
+L3='        case $Yy in'
+L4='          [Yy]* ) clear'
+L5='                  echo "Starting in Normal mode!"'
+L6='                  mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"'
+L7='                  ;;'
+L8='               *) clear'
+L9='                  echo "Starting in Volatile mode! Please wait! This may take 10-15 minutes."'
+L10='                  mount -t tmpfs -o rw,noatime,nodiratime,size=100% tmpfs "${rootmnt?}"' # Mounting available RAM to ${rootmnt}
+L11='                  mkdir /volatizertmp'
+L12='                 mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"}${ROOTFLAGS} "${ROOT}" "/volatizertmp"'
+L13='                  cp -rfa /volatizertmp/* "${rootmnt?}"'
+L14='                  umount /volatizertmp'
+L15='                  rm /volatizertmp'
+L16='                  ;;'
+L17='        esac'
+L18='        ### End of Volatizer modifications ###'
+sed -i "/mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18" /usr/share/initramfs-tools/scripts/local
+
+
+
+else # Earlier Ubuntu/Mint
 L0='        '
 L1='        ### Volatizer modification starts ###'
 L2='        read -t 10 -p "Do you want to boot normally? (enter Y if so...)" Yy'

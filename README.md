@@ -77,3 +77,4 @@ Update plans:
 What's new:
 Version 1.1
 - Added Debian compatibility.(requested by: pe3no)
+- Fixed support for new Ubuntu/Mint versions. (Ubuntu 18.04 was last I used, I recently tried it with Ubuntu 20.04 and didn't work.)
