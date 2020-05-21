@@ -31,6 +31,7 @@ Known issues and workarounds:
 - If your PC fails to boot into volatile mode, try normal mode... If it runs out of ram it won't boot, since the swap is mounted after the root partition, which means that even if you're able to overfill it, it can't use swap at boot! Solution: move over your data to another partition, then try again! (Be aware that other users can also fill up the system partition quickly causing it to not boot into volatile mode!)
 
 Supported distros(Volatizer for these are all tested and working):
+Ubuntu 20.04 (Fixed in V1.1. The initramfs was modified so it wasn't compatible... Now it is!)
 Debian 10 Buster (As of V1.1)
 Ubuntu 18.04
 Ubuntu 16.04 and 17.04 (both Desktop and Server)
@@ -62,6 +63,11 @@ Installation:
 - Reboot into Volatile mode.
 - Open terminal, and run the command "volatizer". The rest should be easy...
 
+Good to know:
+- On Debian you can't see what you're typing at the prompt, but it works, it's just annoying.
+- On Ubuntu 20.04 I added an extra 5 second delay before the prompt, otherwise it's easy to miss it among tons of messages...
+- Don't use the cleanup it's broken at the moment! You can easily break your system with it...
+
 Recommendations:
 - Try it for learning, experimenting and entertainment! Having a fast reacting system can be very addictive(from my experience):P ...and you don't nesesarily need top specs, mine is a quad core AMD from 2011 with only integrated graphics, and an even older mechanical drive, but it lauches any program in vilatile mode in like 3-4s at most due to the nearly 15GB/s read/write speed of the RAM.(your mileage may vary depending on ram and processor speed and core cout)
 - Don't use it in volatile mode for important work, without backup and autosave!
@@ -77,4 +83,4 @@ Update plans:
 What's new:
 Version 1.1
 - Added Debian compatibility.(requested by: pe3no)
-- Fixed support for new Ubuntu/Mint versions. (Ubuntu 18.04 was last I used, I recently tried it with Ubuntu 20.04 and didn't work.)
+- Fixed support for new Ubuntu/Mint versions. (Ubuntu 18.04 was last I used, I recently tried it with Ubuntu 20.04 and didn't work so I fixed it.)
