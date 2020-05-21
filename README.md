@@ -25,27 +25,28 @@ Disadvantages:
 - RAM is called volatile memory for good reason! In volatile mode: 1. If the power goes out, and you have no UPS or the battery dies you loose data instantly! 2. If you forget to save it before shutdown or reboot your data is gone for good! (That's where the save and backup functions come in handy... use them carefully!)
 
 Known issues and workarounds:
+- Don't use the cleanup it's broken at the moment! You can easily break your system with it...
 - When creating new human user, you also have to create a .Volatizer folder in his/her home folder, place a copy of the volatizer config file within it, configure it, and optionally make it owned by him/her... This will be made easy in version 1.1, but until then make sure all human users have been created before installing volatizer. The installer will do this for you automatically for all existing users...
 - You will get all sorts of erros and warnings if trying to update install things in volatile mode, telling you to prepare for apocalipse... Don't panic! Ubuntu wansn't exactly designed to run in tmpfs without protest... ;) You'll be just fine as the data on system partition will be discarded upon shutdown/reboot. Even if you run the save script, only your home folder will be saved(with everything within it), nothing else from the system partition... So just ignore those warnings and errors...
-- You can only boot into Volatile(default) mode remotely! Therefore you can't make persistent changes to the system remotely. Since SSH isn't started yet when the prompt appears, and nothing is mounted yet, so you can't see the prompt remotely... A solution for this issue requires major changes... A fix for this issue will have to wait until version 2.0 or a better solution then I can think of right now. For the time being avoid using it for servers unless the difficulty to make persistent changes remotely is a desired feature for your application! (If you really have to use it remotely you can edit the volatizer entry in /usr/share/initramfs-tools/scripts/local file, then "run update-grub && update-initramfs -u" each time you want to toggle mode... Please note that this is a risky operation, I wouldn't recommend it unless you really know what you're doing!)
-- If your PC fails to boot into volatile mode, try normal mode... If it runs out of ram it won't boot, since the swap is mounted after the root partition, which means that even if you're able to overfill it, it can't use swap at boot! Solution: move over your data to another partition, then try again! (Be aware that other users can also fill up the system partition quickly causing it to not boot into volatile mode!)
+- You can only boot into Volatile(default) mode remotely! Therefore you can't esily make persistent changes to the system remotely. Since SSH isn't started yet when the prompt appears, and nothing is mounted yet, so you can't see the prompt remotely... A solution for this issue requires major changes... A fix for this issue will have to wait until version 2.0 or a better solution then I can think of right now. For the time being avoid using it for servers unless the difficulty to make persistent changes remotely is a desired feature for your application! (If you really have to use it remotely you can edit the volatizer entry in /usr/share/initramfs-tools/scripts/local file, then "run update-grub && update-initramfs -u" each time you want to toggle mode... Please note that this is a risky operation, I wouldn't recommend it unless you really know what you're doing!)
+- If your PC fails to boot into volatile mode, try normal mode... If it runs out of ram it won't boot, since the swap is mounted after the root partition, which means that even if you're able to overfill it during normal use, it can't use swap at boot! Solution: move over your data to another partition, then try again! (Be aware that other users can also fill up the system partition quickly causing it to not boot into volatile mode!)
 
 Supported distros(Volatizer for these are all tested and working):
-Ubuntu 20.04 (Fixed in V1.1. The initramfs was modified so it wasn't compatible... Now it is!)
-Debian 10 Buster (As of V1.1)
-Ubuntu 18.04
-Ubuntu 16.04 and 17.04 (both Desktop and Server)
-Ubuntu MATE 16.04 and 17.04
-Ubuntu Gnome 16.04 and 17.04
-Ubuntu Budgie 17.04
-Kubuntu 16.04 and 17.04
-Lubuntu 16.04 and 17.04
-Linux Mint 18.2 (Cinemon, Mate, KDE)
+- Ubuntu 20.04 (Fixed in V1.1. The initramfs was modified so it wasn't compatible... Now it is!)
+- Debian 10 Buster (As of V1.1)
+- Ubuntu 18.04
+- Ubuntu 16.04 and 17.04 (both Desktop and Server)
+- Ubuntu MATE 16.04 and 17.04
+- Ubuntu Gnome 16.04 and 17.04
+- Ubuntu Budgie 17.04
+- Kubuntu 16.04 and 17.04
+- Lubuntu 16.04 and 17.04
+- Linux Mint 18.2 (Cinemon, Mate, KDE)
 (Please note that I've tested it a few months earlyer, on all these distros, when I initially wanted to release, before cleaning up the code and fixing some issues... I can not guarantee that it still works on all of these... Currently I'm using it on Ubuntu Gnome 17.04 with latest updates applied!)
 
 Known NOT supported distros(Tested but not compatible with the current version of Volatizer):
-Fedora
-Slackware
+- Fedora
+- Slackware
 
 System requirements:
 - 8GB(or more) RAM (the faster in MHz the better...)
@@ -66,7 +67,6 @@ Installation:
 Good to know:
 - On Debian you can't see what you're typing at the prompt, but it works, it's just annoying.
 - On Ubuntu 20.04 I added an extra 5 second delay before the prompt, otherwise it's easy to miss it among tons of messages...
-- Don't use the cleanup it's broken at the moment! You can easily break your system with it...
 
 Recommendations:
 - Try it for learning, experimenting and entertainment! Having a fast reacting system can be very addictive(from my experience):P ...and you don't nesesarily need top specs, mine is a quad core AMD from 2011 with only integrated graphics, and an even older mechanical drive, but it lauches any program in vilatile mode in like 3-4s at most due to the nearly 15GB/s read/write speed of the RAM.(your mileage may vary depending on ram and processor speed and core cout)
