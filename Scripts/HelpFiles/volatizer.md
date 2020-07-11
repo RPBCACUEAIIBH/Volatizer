@@ -10,13 +10,16 @@ commands:
   autosave - backup (if enabled) and save user home folder periodically
   backup - backup user home folder from hard drive to backup location
   cleanup - clean after updates, old linux images, tmp files, unused packages
-  mode - check mode
+  mode - returns current mode (Normal/Volatile)
   reboot - make backup (if enabled), save user home folder and reboot
   recover - recover backup (Admin only)
   reswap - clear swap after programs are closed or coming back from sleep
   save - make backup (if enabled) and save user home folder
   shutdown - make backup (if enabled), save user home folder and shutdown
   sleep - make backup (if enabled), save user home folder and suspend
+  nboot - forces Normal mode. (Normal boot via SSH) (Persistent)
+  vboot - sets boot mode to volatile mode. (Volatile boot via SSH) (Persistent)
+  bootmode - returns boot mode settings. (Normal/Volatile)
   sudoers - make script(s) run as root without password by user (Admin only)
 
 options:
