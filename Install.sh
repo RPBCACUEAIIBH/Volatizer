@@ -300,7 +300,7 @@ chmod 0440 /etc/sudoers.d/Volatizer-sudoers
 echo ''
 echo 'Done!'
 echo ''
-echo 'For adding customs scripts easily to sudoers use the /usr/share/Volatizer/sudoscript-nopw.sh. for more information use "--help" option.'
+echo 'For adding custom scripts easily to sudoers use the /usr/share/Volatizer/sudoscript-nopw.sh. for more information use "--help" option.'
 echo 'If for some reason sudoers can not be parsed, and sudo command does not work, you can use "pkexec nano /etc/sudoers.d/volatizer-sudoers" command to correct it.'
 echo ''
 
