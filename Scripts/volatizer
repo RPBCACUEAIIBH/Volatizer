@@ -4,7 +4,7 @@
 # Volatizer                                                                    #
 ################################################################################
 #                                                                              #
-# Version 1.1                                                                  #
+# Version 1.2                                                                  #
 # Written by: Tibor Áser Veres                                                 #
 # Source: https://github.com/RPBCACUEAIIBH/Volatizer                           #
 # License: BSD License 2.0 (see LICENSE.md file)                               #
@@ -57,7 +57,7 @@ case $1 in
              sudo volatizer-sudoers $@ # Admin only
              ;;
  --version ) echo ''
-             echo 'Volatizer - Version 1.1'
+             echo 'Volatizer - Version 1.2'
              echo ''
              cat /usr/share/Volatizer/LICENSE.md
              echo ''
