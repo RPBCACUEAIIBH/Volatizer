@@ -6,13 +6,14 @@ So I've searched the internet to find out if I could load the system entirely in
 http://www.elettronicaopensource.com/index.php?f1=mostra_articolo.php&rw=1&art=32 but it was for debian, and I'm using ubuntu(which is debian based but a bit different), and I managed to do it in a few hours, then I wanted to be able to switch back and fort between normal and volatile mode, then to save user data, and I've done it, then after a bit I've lost the system partition agan... so I wanted backups, and so on... :D I figured that others may be interested for whatever reason, so I've cleaned up the code, wrote help files, and this is the result.
 
 Feature decription:
-- Loads a fully installed operating system into RAM(not only Ubuntu 16.04, I've sucessfuly tested it on various flavors of Ubuntu and on Linux Mint as well).
-- You can choose mode after the grub screen, and use it in normal mode if you want...(which is faster to start when you'r in a hurry but less responsive)
+- Loads a fully installed operating system into RAM not only Ubuntu 16.04, I've sucessfuly tested it on various flavors of Ubuntu and on Linux Mint as well as on Debian(v1.1+).
+- You can choose mode after the grub screen, or by runing volatizer nmode/vmode commands(as of v1.2+) and use it in normal mode if you want...(which is faster to start when you'r in a hurry but less responsive)
 - You can do updates, install, and remove programs, in normal mode, then restart to Volatile mode, with the changes you've made in normal mode.
 - You can save user data there's even an autosave feature built in, you just have to launch it!
 - You can make backup of user data either automatically or manually.
 - It's easy to use: The only extra command you really have to remember is "volatizer" the rest is pretty much self explanatory, assuming you have a minimal experience in shell.
 - You can use it for learning, and experimenting with dangerous settings in volatile mode, since restroing a broken system is as easy as pressing reset and waiting for it to reboot.
+- Works via SSH(v1.2+)
 
 Advantages:
 - RAM is the fastest type of memory, it's faster then a RAID0 array of high speed SSDs! This makes the system extremely responsive.(It won't make your processor work faster, even though you may experince some boost in performance it's only due to the CPU not having to wait for data as much not not because it runs faster... Try overclocking for improving CPU performance specifically...)
@@ -22,14 +23,12 @@ Advantages:
 Disadvantages:
 - You need at least 8GB of RAM, 16GB or more is highly recommended!
 - Slow boot... it can take up to 10-15 minutes to load 4-6GB to memory from a slow mechanical hard drive, it should take about 2-3 minutes from SSD... It worth waiting if you don't often turn it off, but put it to sleep. Use the reswap function to restore speed if you see swapping...
-- RAM is called volatile memory for good reason! In volatile mode: 1. If the power goes out, and you have no UPS or the battery dies you loose data instantly! 2. If you forget to save it before shutdown or reboot your data is gone for good! (That's where the save and backup functions come in handy... use them carefully!)
+- RAM is called volatile memory for good reason! In volatile mode: 1. If the power goes out, and you have no UPS or the battery dies you loose data instantly! 2. If you forget to save it before shutdown or reboot your data is gone for good! (That's where the save, autosave and backup functions come in handy... use them carefully!)
 
 Known issues and workarounds:
-- Don't use the cleanup it's broken at the moment! You can easily break your system with it...
 - When creating new human user, you also have to create a .Volatizer folder in his/her home folder, place a copy of the volatizer config file within it, configure it, and optionally make it owned by him/her... This will be made easy in version 1.1, but until then make sure all human users have been created before installing volatizer. The installer will do this for you automatically for all existing users...
 - You will get all sorts of erros and warnings if trying to update install things in volatile mode, telling you to prepare for apocalipse... Don't panic! Ubuntu wansn't exactly designed to run in tmpfs without protest... ;) You'll be just fine as the data on system partition will be discarded upon shutdown/reboot. Even if you run the save script, only your home folder will be saved(with everything within it), nothing else from the system partition... So just ignore those warnings and errors...
-- You can only boot into Volatile(default) mode remotely! Therefore you can't esily make persistent changes to the system remotely. Since SSH isn't started yet when the prompt appears, and nothing is mounted yet, so you can't see the prompt remotely... A solution for this issue requires major changes... A fix for this issue will have to wait until version 2.0 or a better solution then I can think of right now. For the time being avoid using it for servers unless the difficulty to make persistent changes remotely is a desired feature for your application! (If you really have to use it remotely you can edit the volatizer entry in /usr/share/initramfs-tools/scripts/local file, then "run update-grub && update-initramfs -u" each time you want to toggle mode... Please note that this is a risky operation, I wouldn't recommend it unless you really know what you're doing!)
-- If your PC fails to boot into volatile mode, try normal mode... If it runs out of ram it won't boot, since the swap is mounted after the root partition, which means that even if you're able to overfill it during normal use, it can't use swap at boot! Solution: move over your data to another partition, then try again! (Be aware that other users can also fill up the system partition quickly causing it to not boot into volatile mode!)
+- If your PC fails to boot into volatile mode, try normal mode... If it runs out of ram it won't boot, since the swap is mounted after the root partition, which means that even if you're able to overfill it during normal use, it can't use swap at boot! Solution: move over your data to another partition in normal mode, then try again! (Be aware that other users can also fill up the system partition quickly causing it to not boot into volatile mode!)
 
 Supported distros(Volatizer for these are all tested and working):
 - Ubuntu 20.04 (Fixed in V1.1. The initramfs was modified so it wasn't compatible... Now it is!)
@@ -56,8 +55,8 @@ System requirements:
 - Another large partition for large and rarely used files that does not need to be loaded to memory...
 
 Installation:
-- Make sure that all human users are created.
-- Download and unpack Volatizer.
+- Make sure that all human users are created. New users don't have control over volatizer unless you copy the files manually.
+- Download and unpack Volatizer, or clone it, whichever you prefer.
 - Open terminal, and run the Install.sh with sudo in front
 - Follow the instructions.
 - Edit the configuration file at /home/user/.Volatizer/Config (it's in a a hidden directory in your home folder...)
@@ -78,9 +77,11 @@ Update plans:
 - Newuser - Makes creating new users easy (sub-version)
 - Statrup - A script that runs at startup launching autosave and does cleanup, + allows you to do whatever you want automatically at startup (sub-version)
 - Logging - Curently none of volatizer files are logging anything... (sub-version)
-- Remote mode switching - fix for the mode switching issue (major change... probably next version)
 
 What's new:
+Version 1.2
+- Added bootmode settings which can be used via SSH, thus makes it possible to reboot into another mode remotely.
+- Fixed some bugs... (at least in a temporary fashion... :P)
 Version 1.1
 - Added Debian compatibility.(requested by: pe3no)
 - Fixed support for new Ubuntu/Mint versions. (Ubuntu 18.04 was last I used, I recently tried it with Ubuntu 20.04 and didn't work so I fixed it.)
