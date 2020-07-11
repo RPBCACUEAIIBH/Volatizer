@@ -75,5 +75,9 @@ then
     Execute
   fi
 else
-  Execute
+  echo "Notice: Something changed since I wrote it, now it only does basic things what I know is still safe in Normal mode! It can't do damage in volatile mode. Will have to fix this in later version, for now It's just limited..."
+  sleep 5
+  #Execute
+  apt-get -y autoremove
+  apt-get clean
 fi
