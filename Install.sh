@@ -293,6 +293,7 @@ echo "ALL ALL = (ALL) NOPASSWD: $Command/volatizer-backup" | tee -a /tmp/Volatiz
 echo "ALL ALL = (ALL) NOPASSWD: $Command/volatizer-cleanup" | tee -a /tmp/Volatizer-sudoers
 echo "ALL ALL = (ALL) NOPASSWD: $Command/volatizer-reswap" | tee -a /tmp/Volatizer-sudoers
 echo "ALL ALL = (ALL) NOPASSWD: $Command/volatizer-save" | tee -a /tmp/Volatizer-sudoers
+echo "ALL ALL = (ALL) NOPASSWD: $Command/volatizer-bootmode" | tee -a /tmp/Volatizer-sudoers
 cp /tmp/Volatizer-sudoers /etc/sudoers.d/Volatizer-sudoers
 chown root:root /etc/sudoers.d/Volatizer-sudoers
 chmod 0440 /etc/sudoers.d/Volatizer-sudoers

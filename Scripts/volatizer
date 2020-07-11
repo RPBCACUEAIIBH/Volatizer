@@ -17,7 +17,7 @@
 
 if [[ $2 == "--help" ]]
 then
-  cat /usr/share/Volatizer/HelpFiles/$1
+  cat /usr/share/Volatizer/HelpFiles/$1.md
   exit
 fi
 
@@ -52,6 +52,10 @@ case $1 in
   shutdown ) sudo volatizer-save -S
              ;;
      sleep ) sudo volatizer-save -s
+             ;;
+     nboot ) sudo volatizer-bootmode -n
+             ;;
+     vboot ) sudo volatizer-bootmode -v
              ;;
    sudoers ) shift
              sudo volatizer-sudoers $@ # Admin only
