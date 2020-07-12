@@ -107,7 +107,13 @@ function Execute
   fi
   
   echo ""
-  read -t 60 -p "Do you want to remove them?" Yy
+  if [[ $(volatizer-mode) != "Volatile" ]]
+  then
+    read -t 60 -p "Do you want to remove them?" Yy
+  else
+    echo "In volatile mode cleaning them up should do no harm. Removing all unused linux images, headers and modules..."
+    Yy="y"
+  fi
   if [[ $Yy == [Yy]* ]]
   then
       echo ''
