@@ -71,17 +71,20 @@ Recommendations:
 - Try it for learning, experimenting and entertainment! Having a fast reacting system can be very addictive(from my experience):P ...and you don't nesesarily need top specs, mine is a quad core AMD from 2011 with only integrated graphics, and an even older mechanical drive, but it lauches any program in vilatile mode in like 3-4s at most due to the nearly 15GB/s read/write speed of the RAM.(your mileage may vary depending on ram and processor speed and core cout)
 - Don't use it in volatile mode for important work, without backup and autosave!
 - Enable backups, and use the volatizer command for autosaving/rebooting/suspending/shutting down your pc instead of the usual buttons...
-- Don't bother updating installing or removing programs in Volatile mode unless you only wanna use them temporarily... Changes done to the system partition outside the user home folder can not be saved easily, and will only persist until shutdown/reboot!
+- Updating installing or removing programs in Volatile mode are temporary changes... Changes done to the system partition outside the user home folder can not be saved easily, and will only persist until shutdown/reboot!
 
 Update plans:
 - Newuser - Makes creating new users easy (sub-version)
-- Statrup - A script that runs at startup launching autosave and does cleanup, + allows you to do whatever you want automatically at startup (sub-version)
-- Logging - Curently none of volatizer files are logging anything... (sub-version)
+- Automatic background operation of Autosave, and maybe cleanup (sub-version)
+- Clean up the code keep it basic but powerful, with some optional features. (v2.0)
+- Initial step by step setup. (v2.0)
+- Logging - Curently none of volatizer files are logging anything... (v2.0)
 
 What's new:
 Version 1.2
 - Added bootmode settings which can be used via SSH, thus makes it possible to reboot into another mode remotely.
-- Fixed some bugs... (at least in a temporary fashion... :P)
+- Fixed the cleanup script, and made it even better.
+- Fixed some other bug(s) as well.
 Version 1.1
 - Added Debian compatibility.(requested by: pe3no)
 - Fixed support for new Ubuntu/Mint versions. (Ubuntu 18.04 was last I used, I recently tried it with Ubuntu 20.04 and didn't work so I fixed it.)
