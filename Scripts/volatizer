@@ -57,7 +57,8 @@ case $1 in
              ;;
      vboot ) sudo volatizer-bootmode -v
              ;;
-  bootmode ) sudo volatizer-bootmode
+  bootmode ) shift
+             sudo volatizer-bootmode $@
              ;;
    sudoers ) shift
              sudo volatizer-sudoers $@ # Admin only

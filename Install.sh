@@ -44,7 +44,7 @@ else
 fi
 
 # Compatibility check
-if [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t ${FSTYPE} }${ROOTFLAGS} ${ROOT} ${rootmnt}' /usr/share/initramfs-tools/scripts/local) || ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
+if [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t ${FSTYPE} }${ROOTFLAGS} ${ROOT} ${rootmnt}' /usr/share/initramfs-tools/scripts/local) || ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"' /usr/share/initramfs-tools/scripts/local) || ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
 then
   echo 'Compatibility check >> OK'
   echo ''
@@ -97,7 +97,6 @@ then
   then
     rm -f /etc/sudoers.d/Volatizer-sudoers
   fi
-###
   for i in $(ls $Command/volatizer*)
   do
     if [[ ! -z $(echo $i | grep "$Command/volatizer") ]]
@@ -108,19 +107,21 @@ then
       fi
     fi
   done
-###
   for i in $(ls /home)
   do
     if [[ -d /home/$i/.Volatizer ]]
     then
       rm -Rf /home/$i/.Volatizer
       rm -Rf /home/$i/Notice
-      cp -fa /home/$i/.bashrc.old /home/$i/.bashrc
     fi
   done
   if [[ -d $Files ]]
   then
     rm -Rf $Files
+  fi
+  if [[ -f /normalboot ]] # This may annoy people after reinstalling...
+  then
+    rm -f /normalboot
   fi
   if [[ $Fail == false ]]
   then
@@ -186,7 +187,7 @@ echo ''
 echo ''
 echo 'Making changes to initramfs'
 cp /usr/share/initramfs-tools/scripts/local /usr/share/initramfs-tools/scripts/local.old
-if [[ ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]]
+if [[ ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]] # Debian
 then
 L0='        '
 L1='        ### Volatizer modification starts ###'
@@ -234,7 +235,40 @@ L42='        if [[ $MountFail == true ]]'
 L43='        then'
 L44='        ### End of Volatizer modifications ###'
 sed -i "/if ! mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"; then/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18\n$L19\n$L20\n$L21\n$L22\n$L23\n$L24\n$L25\n$L26\n$L27\n$L28\n$L29\n$L30\n$L31\n$L32\n$L33\n$L34\n$L35\n$L36\n$L37\n$L38\n$L39\n$L40\n$L41\n$L42\n$L43\n$L44" /usr/share/initramfs-tools/scripts/local
-else
+
+elif [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"' /usr/share/initramfs-tools/scripts/local) ]] # Ubuntu 20.04+
+then
+L0='        '
+L1='        ### Volatizer modification starts ###'
+L2='        sleep 5 # Let the messages end cause it is easy to miss the prompt among the messages... :-/'
+L3='        read -t 10 -p "Do you want to boot normally? (enter Y if so...)" Yy'
+L4='        case $Yy in'
+L5='          [Yy]* ) clear'
+L6='                  echo "Starting in Normal mode!"'
+L7='                  mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"'
+L8='                  ;;'
+L9='               *) clear'
+L10='                  mkdir /volatizertmp'
+L11='                  mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"}${ROOTFLAGS} "${ROOT}" "/volatizertmp"'
+L12='                  if [[ -e "/volatizertmp/normalboot" ]]'
+L13='                  then'
+L14='                    echo "Normal boot request file found! Booting normally..."'
+L15='                    sleep 2'
+L16='                    umount /volatizertmp'
+L17='                    rmdir /volatizertmp'
+L18='                    mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"'
+L19='                  else'
+L20='                  echo "Starting in Volatile mode! Please wait! This may take 10-15 minutes."'
+L21='                  mount -t tmpfs -o rw,noatime,nodiratime,size=100% tmpfs "${rootmnt?}"' # Mounting available RAM to ${rootmnt}
+L22='                  cp -rfa /volatizertmp/* "${rootmnt?}"'
+L23='                  umount /volatizertmp'
+L24='                  rm /volatizertmp'
+L25='                  ;;'
+L26='        esac'
+L27='        ### End of Volatizer modifications ###'
+sed -i "/mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18\n$L19\n$L20\n$L21\n$L22\n$L23\n$L24\n$L25\n$L26\n$L27" /usr/share/initramfs-tools/scripts/local
+
+else # Earlier Ubuntu/Mint
 L0='        '
 L1='        ### Volatizer modification starts ###'
 L2='        read -t 10 -p "Do you want to boot normally? (enter Y if so...)" Yy'

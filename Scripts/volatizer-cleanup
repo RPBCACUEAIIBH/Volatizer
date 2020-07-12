@@ -16,6 +16,37 @@ fi
 
 function Execute
 {
+  echo ""
+  echo "Removing temporary files to save space (/tmp/*)"
+  rm -rf /tmp/*
+  echo ""
+  echo "Clearing every user's thumbnails and thrash"
+  for i in $(ls /home)
+  do
+    rm -Rf /home/$i/.cache/thumbnails
+    rm -Rf /home/$i/.local/share/Trash/*
+  done
+  echo ""  
+  echo "You may also wanna clear your browser's cache."
+  
+  echo ""
+  echo "Clearing logs"
+  rm -Rf /var/log/*.gz
+  for i in $(ls -p /var/log | grep -v / | grep log)
+  do
+    echo -n "" > /var/log/$i
+  done
+  for i in $(ls -p /var/log | grep -v / | grep dmesg)
+  do
+    echo -n "" > /var/log/$i
+  done
+
+  echo ""
+  echo "Removing old linux images headers and modules"
+  echo ""
+  echo 'If you update your system regularly this may save lots of space... Each set of linux image and header can be quite large, and you only use 1 set. Another set is good to keep for backup. The rest can be removed.'
+  echo "For safety reasons this process requires your utmost attention and approval as it is known to cause damage. If you're not sure about it, or see any issues with the marked images modules and headers, skip it or do it manually using apt-get purge, then run this script again skipping this step again to clean up after apt."
+  echo ""
   ALimg=$(dpkg --list | grep linux-image | awk '{ print $2 }' | sort -V)
   CLimg="linux-image-$(uname -r)"
   for i in $ALimg
@@ -26,35 +57,66 @@ function Execute
     fi
     PLimg=$i
   done
-
-  echo ''
-  echo ''
   echo "Currently used linux image: $CLimg"
   echo "Previous linux image: $PLimg"
-
   if [[ $1 == '-a' ]]
   then
     BreakAt=$CLimg
   else
     BreakAt=$PLimg
   fi
-
+  echo ""
+  echo "The following linux images and header ware marked for removal:"
   for i in $ALimg
   do
     if [[ $i == $BreakAt ]]
     then
       break
     fi
-    RLimg=$i
-    RLhdr="linux-headers$(sed 's/linux-image//' <<< "$i")"
-    echo ''
-    echo ''
-    echo "Removing: $i linux-image and header"
-    apt-get -y purge $RLimg
-    apt-get -y purge $RLhdr
+    LImg=$i
+    LHdr="linux-headers$(sed 's/linux-image//' <<< "$i")"
+    LMod="linux-modules$(sed 's/linux-image//' <<< "$i")"
+    LModE="linux-modules-extra$(sed 's/linux-image//' <<< "$i")"
+    if [[ ! -z $(dpkg --list | grep $LImg) ]]
+    then
+      Marked="$Marked $LImg"
+    fi
+    if [[ ! -z $(dpkg --list | grep $LHdr) ]]
+    then
+      Marked="$Marked $LHdr"
+    fi
+    if [[ ! -z $(dpkg --list | grep $LMod) ]]
+    then
+      Marked="$Marked $LMod"
+    fi
+    if [[ ! -z $(dpkg --list | grep $LModE) ]]
+    then
+      Marked="$Marked $LModE"
+    fi
   done
+  echo ''
+  for i in $Marked
+  do
+    echo $i
+  done
+  
+  if [[ $1 == "-a" && $(volatizer-mode) == "Normal" ]]
+  then
+    echo ""
+    echo "Warning! Option -a is specified. All unused images and headers will be removed, no backup will be kept!"
+  fi
+  
+  echo ""
+  read -t 60 -p "Do you want to remove them?" Yy
+  if [[ $Yy == [Yy]* ]]
+  then
+      echo ''
+      echo ''
+      echo "Removing: $i linux-image and header"
+      apt-get -y purge $Marked
+  fi
 
-  rm -rf /tmp/*
+  echo "Executing apt-get autoremove, and apt-get clean. This cleans up dependencies of uninstalled packages, and clears apt cache."
   apt-get -y autoremove
   apt-get clean
   echo ''
@@ -72,12 +134,8 @@ then
     sleep 5
     exit
   else
-    Execute
+    Execute $1
   fi
 else
-  echo "Notice: Something changed since I wrote it, now it only does basic things what I know is still safe in Normal mode! It can't do damage in volatile mode. Will have to fix this in later version, for now It's just limited..."
-  sleep 5
-  #Execute
-  apt-get -y autoremove
-  apt-get clean
+  Execute $1
 fi
