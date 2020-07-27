@@ -28,6 +28,9 @@ case $1 in
     backup ) shift
              sudo volatizer-backup $@
              ;;
+  bootmode ) shift
+             sudo volatizer-bootmode $@
+             ;;
    cleanup ) shift
              if [[ $(volatizer-mode) == "Volatile" ]]
              then
@@ -38,10 +41,14 @@ case $1 in
              ;;
       mode ) volatizer-mode
              ;;
+     nboot ) sudo volatizer-bootmode -n
+             ;;
     reboot ) sudo volatizer-save -R
              ;;
    recover ) shift
              sudo volatizer-recover $@ # Admin only
+             ;;
+    repair ) sudo volatizer-repair
              ;;
     reswap ) shift
              sudo volatizer-reswap $@
@@ -53,15 +60,10 @@ case $1 in
              ;;
      sleep ) sudo volatizer-save -s
              ;;
-     nboot ) sudo volatizer-bootmode -n
-             ;;
-     vboot ) sudo volatizer-bootmode -v
-             ;;
-  bootmode ) shift
-             sudo volatizer-bootmode $@
-             ;;
    sudoers ) shift
              sudo volatizer-sudoers $@ # Admin only
+             ;;
+     vboot ) sudo volatizer-bootmode -v
              ;;
  --version ) echo ''
              echo 'Volatizer - Version 1.2'

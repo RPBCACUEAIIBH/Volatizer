@@ -1,0 +1,42 @@
+#! /bin/bash
+
+# This is a standalone script intended to repair Volatizer if initramfs gets updated, and the modification is lost... (It happened before.)
+
+# Finding roots
+ScriptPath="$(cd "$(dirname "$0")"; pwd -P)"
+cd $ScriptPath
+
+
+if [[ $(./volatizer-mode) != "Normal" ]]
+then
+  echo ""
+  echo "This must be executed in Normal mode! Aborting..."
+  echo ""
+  exit
+fi
+
+if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) ]]
+then
+  echo ""
+  echo "No problem detected!"
+  echo ""
+else
+  echo ""
+  echo "Can't find Volatizer entry in initramfs! This may be due to an update of initramfs overwriting the modified file. Attempting to repair it..."
+  if  ! Scripts/compatibility.sh
+  then
+    exit
+  fi
+  
+  echo ''
+  echo 'Making changes to initramfs'
+  modify-initramfs.sh
+  
+  echo ''
+  echo 'Finalizing modification...'
+  update-grub
+  update-initramfs -u
+  echo ''
+  echo 'Done!'
+  echo ''
+fi
