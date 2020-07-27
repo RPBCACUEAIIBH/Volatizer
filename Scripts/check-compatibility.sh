@@ -2,6 +2,14 @@
 
 # This script checks the system for compatibility. Used by Install.sh and volatizer-repair. (not standalone)
 
+# Constants
+Command="/usr/local/bin"
+
+# Finding roots
+ScriptPath="$(cd "$(dirname "$0")"; pwd -P)"
+cd $ScriptPath
+
+# Execution
 echo ''
 echo ''
 echo 'Checking requirements...'
@@ -43,14 +51,27 @@ else
 fi
 
 # Mode check
-if [[ $(./volatizer-mode) == "Volatile" ]]
+if [[ -d $Command/volatizer-mode ]]
 then
-  echo 'The system runs in "Volatile" mode! Please reboot into normal mode and try again!'
-  echo ''
-  Fail=true
+  if [[ $(volatizer-mode) == "Volatile" ]] # if it's installded it's called as a command, probably by repair script.
+  then
+    echo 'The system runs in "Volatile" mode! Please reboot into normal mode and try again!'
+    echo ''
+    Fail=true
+  else
+    echo 'Mode check >> OK'
+    echo ''
+  fi
 else
-  echo 'Mode check >> OK'
-  echo ''
+  if [[ $(../Commands/volatizer-mode) == "Volatile" ]] # If it's not installed, it's called by install script, and executed from the Commands folder.
+  then
+    echo 'The system runs in "Volatile" mode! Please reboot into normal mode and try again!'
+    echo ''
+    Fail=true
+  else
+    echo 'Mode check >> OK'
+    echo ''
+  fi
 fi
 
 if [[ $Fail == true ]]

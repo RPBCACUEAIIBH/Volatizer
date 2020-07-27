@@ -2,6 +2,9 @@
 
 # This is a standalone script intended to repair Volatizer if initramfs gets updated, and the modification is lost... (It happened before.)
 
+# Constants
+Files="/usr/share/Volatizer"
+
 # Finding roots
 ScriptPath="$(cd "$(dirname "$0")"; pwd -P)"
 cd $ScriptPath
@@ -23,14 +26,14 @@ then
 else
   echo ""
   echo "Can't find Volatizer entry in initramfs! This may be due to an update of initramfs overwriting the modified file. Attempting to repair it..."
-  if  ! Scripts/compatibility.sh
+  if  ! $Files/Scripts/check-compatibility.sh
   then
     exit
   fi
   
   echo ''
   echo 'Making changes to initramfs'
-  modify-initramfs.sh
+  $Files/Scripts/modify-initramfs.sh
   
   echo ''
   echo 'Finalizing modification...'

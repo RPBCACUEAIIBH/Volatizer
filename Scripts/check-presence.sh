@@ -2,8 +2,15 @@
 
 # This script checks previous volatizer installation and cleans it up if found. Used by Install.sh (not standalone)
 
-if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) ]]
+# Constants
+Command="/usr/local/bin"
+Files="/usr/share/Volatizer"
+
+# Execution
+if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) || -e $Command/volatizer* || -d $Files || -f /etc/sudoers.d/Volatizer-sudoers || -f /normalboot || -d /home/$i/.Volatizer ]]
 then
+  Fail=false
+  
   echo 'Warning! Previous volatizer installation detected. Attempting to clean up...'
   if [[ -f /etc/default/grub.old ]]
   then
@@ -56,7 +63,7 @@ then
     echo ''
     echo 'Older version of files has been successfully restored, and previous volatizer installation removed.'
     echo 'For double checking please run this script again. ...or do not if you just wanted to get rid of it.'
-    exit
+    exit 1
   else
     echo ''
     echo "Fatal errors occurred! You may have to start with a new installation or a different distro..."

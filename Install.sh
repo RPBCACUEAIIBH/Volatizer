@@ -80,11 +80,12 @@ Scripts/modify-initramfs.sh
 echo ''
 echo 'Copying shared files' ################################################################# This is a danger zone #######################################################################
 mkdir $Files
-cp -R ./Scripts/HelpFiles $Files
+cp -R ./HelpFiles $Files
+cp -R ./Scripts $Files
 cp ./LICENSE.md $Files
 chown -R root:root $Files
 chmod -R 755 $Files
-cp ./Scripts/* $Command
+cp ./Commands/* $Command
 chown -R root:root $Command
 chmod -R 755 $Command
 echo ''

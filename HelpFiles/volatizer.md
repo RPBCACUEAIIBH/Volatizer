@@ -21,6 +21,8 @@ commands:
   vboot - sets boot mode to volatile mode. (Volatile boot via SSH) (Persistent)
   bootmode - returns boot mode settings. (Normal/Volatile)
   sudoers - make script(s) run as root without password by user (Admin only)
+  repair - attempts to fix volatizer in case initramfs gets updated, and
+the modification overwritten, if it's still compatible. (Admin only)
 
 options:
       --help                  display this help file and exit
