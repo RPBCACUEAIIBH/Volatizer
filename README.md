@@ -74,7 +74,7 @@ Recommendations:
 - Updating installing or removing programs in Volatile mode are temporary changes... Changes done to the system partition outside the user home folder can not be saved easily, and will only persist until shutdown/reboot!
 
 Update plans:
-- Automatic background operation of Autosave, and maybe cleanup (sub-version)
+- Automatic background operation of Autosave, and maybe cleanup (v2.0 << Save and backup scripts ware designed to be called by users, not by systemd when no users are logged in yet. Other then that it may not be good idea to automate save and backup, as that may save things the user may not wanna save. For now it's gonna be manual, and will think about it and maybe rewrite thigs for v2.0.)
 - Clean up the code keep it basic but powerful, with some optional features. (v2.0)
 - Initial step by step setup. (v2.0)
 - Logging - Curently none of volatizer files are logging anything... (v2.0)
