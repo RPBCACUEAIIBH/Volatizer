@@ -43,12 +43,15 @@ case $1 in
              ;;
      nboot ) sudo volatizer-bootmode -n
              ;;
+   newuser ) shift
+             sudo volatizer-newuser $@ # Admin only
+             ;;
     reboot ) sudo volatizer-save -R
              ;;
    recover ) shift
              sudo volatizer-recover $@ # Admin only
              ;;
-    repair ) sudo volatizer-repair
+    repair ) sudo volatizer-repair # Admin only
              ;;
     reswap ) shift
              sudo volatizer-reswap $@

@@ -7,7 +7,7 @@ Command="/usr/local/bin"
 Files="/usr/share/Volatizer"
 
 # Execution
-if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) || -e $Command/volatizer* || -d $Files || -f /etc/sudoers.d/Volatizer-sudoers || -f /normalboot || -d /home/$i/.Volatizer ]]
+if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) || -e $Command/volatizer* || -d $Files || -f /etc/sudoers.d/Volatizer-sudoers || -f /normalboot ]]
 then
   Fail=false
   
@@ -20,7 +20,8 @@ then
     echo 'Error: /etc/default/grub.old file missing.'
     Fail=true
   fi
-  if [[ -f /usr/share/initramfs-tools/scripts/local.old ]]
+  #CAUTION! Do not restore the old one if it's getting uninstalld because it doesn't work, and it doesn't work because initramfs was updated... Keep the updated version!
+  if [[ -f /usr/share/initramfs-tools/scripts/local.old && ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) ]] # just a bit of foolproofing...
   then
     mv -f /usr/share/initramfs-tools/scripts/local.old /usr/share/initramfs-tools/scripts/local
     update-initramfs -u
@@ -42,18 +43,6 @@ then
       fi
     fi
   done
-  for i in $(ls /home)
-  do
-    if [[ -d /home/$i/.Volatizer ]]
-    then
-      rm -Rf /home/$i/.Volatizer
-      rm -Rf /home/$i/Notice
-    fi
-  done
-  if [[ -d $Files ]]
-  then
-    rm -Rf $Files
-  fi
   if [[ -f /normalboot ]] # This may annoy people after reinstalling...
   then
     rm -f /normalboot
@@ -63,13 +52,31 @@ then
     echo ''
     echo 'Older version of files has been successfully restored, and previous volatizer installation removed.'
     echo 'For double checking please run this script again. ...or do not if you just wanted to get rid of it.'
-    exit 1
   else
     echo ''
-    echo "Fatal errors occurred! You may have to start with a new installation or a different distro..."
-    echo "Please save all your data before shutting down or rebooting, cause it may not restart..."
-    exit 1
+    echo "Oh crap! :S Fatal error(s) occured!"
+    echo "SAVE ALL YOUR DATA AND MAKE A LIVE DISK BEFORE SHUTDOWN/REBOOT, CAUSE IT MAY OR MAY NOT BE ABLE TO REBOOT!"
   fi
+  echo ""
+  read -t 7 -p "Do you want to remove personal volatizer configiration files for all users? (Only recommended if Volatizer won't be reinstalled. y/n) " Yy
+  if [[ $Yy == [Yy]* ]]
+  then
+    for i in $(ls /home)
+    do
+      if [[ -d /home/$i/.Volatizer ]]
+      then
+        rm -Rf /home/$i/.Volatizer
+      fi
+    done
+  fi
+  echo ""
+  # This is basically it's self destruct sequence... Therefore deleting itself must be the last thing it does...
+  # (Shell does not load the entire script into memory before execution, only the current block of code, thus it may never get further then this if statement if it's deleted before the rest of it is done.)
+  if [[ -d $Files ]]
+  then
+    rm -Rf $Files
+  fi
+  exit 1
 else
   echo 'Previous volatizer modification check >> OK'
   echo ''

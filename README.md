@@ -80,13 +80,14 @@ Update plans:
 - Initial step by step setup. (v2.0)
 - Logging - Curently none of volatizer files are logging anything... (v2.0)
 
-What's new:
-Version 1.2
+Version 1.2:
 - Added bootmode settings which can be used via SSH, thus makes it possible to reboot into another mode remotely.
 - Fixed the cleanup script, and made it even better.
 - Fixed some other bug(s) as well.
 - Added repair script which can restore volatizer in case initramfs gets updated, and the modified file overwritten thus the modification lost.
 - Devided the Install.sh script for readability, and reusability reasons.
+- Re-organized the files...
+
 Version 1.1
 - Added Debian compatibility.(requested by: pe3no)
 - Fixed support for new Ubuntu/Mint versions. (Ubuntu 18.04 was last I used, I recently tried it with Ubuntu 20.04 and didn't work so I fixed it.)

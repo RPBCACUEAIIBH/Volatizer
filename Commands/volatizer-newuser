@@ -1,0 +1,32 @@
+#! /bin/bash
+
+# Constants
+Files="/usr/share/Volatizer"
+
+# Execution
+echo ''
+if [[ ! -d /home/$1 ]]
+then
+  if [[ ! -z $2 ]]
+  then
+    echo "Fatal: Username can't have spaces!"
+    exit 1
+  fi
+  useradd -U -m $1
+  read -p "Do you want to set a password for $1 now? (y/n)"
+  if [[ $Yy == [Yy]* ]]
+  then
+    passwd $1
+  fi
+fi
+if [[ ! -d /home/$1/.Volatizer ]]
+then
+  echo "Copying files for $1"
+  mkdir /home/$1/.Volatizer
+  cp $Files/UserFiles/* /home/$1/.Volatizer
+  chown -R $1:$1 /home/$1/.Volatizer
+  chmod -R 755 /home/$1/.Volatizer
+  ln -s $Files/LICENSE.md /home/$1/.Volatizer
+else
+  echo "User already has the files!"
+fi

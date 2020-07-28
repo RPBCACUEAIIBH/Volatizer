@@ -11,6 +11,8 @@ commands:
   backup - backup user home folder from hard drive to backup location
   cleanup - clean after updates, old linux images, tmp files, unused packages
   mode - returns current mode (Normal/Volatile)
+  newuser - creates new user, and adds volatizer files to existing or new user
+(Admin only)
   reboot - make backup (if enabled), save user home folder and reboot
   recover - recover backup (Admin only)
   reswap - clear swap after programs are closed or coming back from sleep
