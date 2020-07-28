@@ -74,7 +74,6 @@ Recommendations:
 - Updating installing or removing programs in Volatile mode are temporary changes... Changes done to the system partition outside the user home folder can not be saved easily, and will only persist until shutdown/reboot!
 
 Update plans:
-- Newuser - Makes creating new users easy (sub-version)
 - Automatic background operation of Autosave, and maybe cleanup (sub-version)
 - Clean up the code keep it basic but powerful, with some optional features. (v2.0)
 - Initial step by step setup. (v2.0)
@@ -83,10 +82,12 @@ Update plans:
 Version 1.2:
 - Added bootmode settings which can be used via SSH, thus makes it possible to reboot into another mode remotely.
 - Fixed the cleanup script, and made it even better.
-- Fixed some other bug(s) as well.
+- Fixed some bug(s).
 - Added repair script which can restore volatizer in case initramfs gets updated, and the modified file overwritten thus the modification lost.
 - Devided the Install.sh script for readability, and reusability reasons.
+- Made adding new user easy with another new script.
 - Re-organized the files...
+- Added a disclaimer.
 
 Version 1.1
 - Added Debian compatibility.(requested by: pe3no)

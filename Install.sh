@@ -37,10 +37,10 @@ then
   echo ''
   echo ''
   echo 'Disclaimer'
-  echo "Volatizer is an unsafe software! It was not intended to be harmful, but it's not without risks as it modifies the way the operating system supposed to boot, and may cause data loss in case of power failure or even when you just press shut down/reboot forgetting to run the save command! It was intended for experimental purpose, although it's extreme responsiveness can be very addictive. :) It may also pose additional security risks due to the extra set of commands that can be executed as root witout password. Use it at your own risk!"
+  echo "Volatizer is an inherently unsafe software! It was not intended to be harmful, but it's not without risks as it modifies the way the operating system boots, thus failure to do it properly may result in a broken operating system. It may cause data loss in case of power failure or even when you just press shut down/reboot forgetting to run the save command! Furthermore it may also pose additional security risks due to the extra set of commands that can be executed as root witout password. It is intended for experimental purpose, and it's VM-like ease of restoration without the requirements, and overhead of a VM, and it's extreme responsiveness can be quite useful. Use it at your own risk!"
   echo ''
   echo ''
-  read -p 'Do you agree to this license?(type "Yes" and press enter if so.): ' Yy
+  read -p 'Do you accept the license and the risks involved?(type "Yes" and press enter if so.): ' Yy
   echo ''
 else
   echo 'Error: License agreement not found!'
