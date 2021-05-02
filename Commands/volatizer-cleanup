@@ -41,6 +41,10 @@ function Execute
     echo -n "" > /var/log/$i
   done
 
+  echo "Vacuuming journals"
+  journalctl --disk-usage
+  journalctl --vacuum-size=100M
+
   echo ""
   echo "Removing old linux images headers and modules"
   echo ""
