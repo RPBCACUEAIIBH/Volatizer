@@ -41,9 +41,11 @@ function Execute
     echo -n "" > /var/log/$i
   done
 
+  echo ""
   echo "Vacuuming journals"
   journalctl --disk-usage
   journalctl --vacuum-size=100M
+  echo ""
 
   echo ""
   echo "Removing old linux images headers and modules"
@@ -125,6 +127,11 @@ function Execute
       echo "Removing: $i linux-image and header"
       apt-get -y purge $Marked
   fi
+
+  echo ""
+  echo "Clearing snap cache"
+  rm -Rf /var/lib/snapd/cache/*
+  echo ""
 
   echo "Executing apt-get autoremove, and apt-get clean. This cleans up dependencies of uninstalled packages, and clears apt cache."
   apt-get -y autoremove
