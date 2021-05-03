@@ -128,15 +128,16 @@ function Execute
       apt-get -y purge $Marked
   fi
 
-  echo ""
-  echo "Clearing snap cache"
-  rm -Rf /var/lib/snapd/cache/*
-  echo ""
-
   echo "Executing apt-get autoremove, and apt-get clean. This cleans up dependencies of uninstalled packages, and clears apt cache."
   apt-get -y autoremove
   apt-get clean
   echo ''
+  
+  if [[ ! -z $(dpkg -l | grep snapd) ]]
+  then
+    volatizer-snapcleaner
+  fi
+  
   echo 'Done!'
   echo ''
   echo ''

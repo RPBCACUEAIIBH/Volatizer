@@ -1,0 +1,45 @@
+#! /bin/bash
+
+
+if [[ ${1} == "--help" ]]
+then
+  cat /usr/share/Volatizer/HelpFiles/snapcleaner.md
+  exit
+fi
+
+# Root check
+if [[ $(whoami) != "root" ]]
+then
+  echo 'This script needs to run as root! Please use "sudo" in front.'
+  exit
+fi
+
+echo ""
+echo "Snap cleanup"
+echo "The following old versions are marked for removal:"
+echo "(Snap keeps the current version and 2 old versions of each package, which is a waste of memory... For safety reasons removing them requires your permission. Be careful and use \"snap list --all\" command to double check.)"
+echo ""
+snap list --all | awk '{ print $1 " " $3 " " $6 }' | grep "disabled" | awk '{ print $1 " --revision=\"" $2 "\"" }'
+echo ""
+read -p "Do you want to remove them? (y/n): " Yy
+if [[ $Yy == [Yy]* ]]
+then
+  snap list --all | awk '{ print $1 " " $3 " " $6 }' | grep "disabled" | awk '{ print $1 " --revision=\"" $2 "\"" }' | while read SnapName Rev
+  do
+    snap remove $SnapName $Rev
+  done
+fi
+
+echo ""
+echo "Clearing snap cache can prevent package removal by \"snap remove\" command! Unfortunately the cache can occupy GBs."
+echo "If that happens, you can break the package, and then uninstall it by:"
+echo "    A) using \"df -alh\" command to find out the package's filesystem, then \"sudo umount /dev/loopXX\" (where XX is a number). Each active snap has one..."
+echo "    B) delete /snap/package-name and /var/lib/snapd/snaps/package-name.snap)"
+echo "    c) using \"snap remove --purge package-name\" to remove the broken package."
+echo ""
+read -p "Do you want to clear the snap cache? (y/n): " Yy
+if [[ $Yy == [Yy]* ]]
+then
+  rm -Rf /var/lib/snapd/cache/*
+fi
+echo ""
