@@ -79,6 +79,11 @@ Update plans:
 - Initial step by step setup. (v2.0)
 - Logging - Curently none of volatizer files are logging anything... (v2.0)
 
+Version 1.3:
+- Added snapcleaner script, which is automatically called by cleanup if snapd is detected, and can get rid of snap cache, and old snap versions, 2 of which is kept by default.
+- Added journal vacuuming to cleanup script.
+- Silenced some errors caused by not calling df as root when checking mode.
+
 Version 1.2:
 - Added bootmode settings which can be used via SSH, thus makes it possible to reboot into another mode remotely.
 - Fixed the cleanup script, and made it even better.

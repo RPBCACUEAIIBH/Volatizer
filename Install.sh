@@ -4,7 +4,7 @@
 # Volatizer                                                                    #
 ################################################################################
 #                                                                              #
-# Version 1.2                                                                  #
+# Version 1.3                                                                  #
 # Written by: Tibor Áser Veres                                                 #
 # Source: https://github.com/RPBCACUEAIIBH/Volatizer                           #
 # License: BSD License 2.0 (see LICENSE.md file)                               #
