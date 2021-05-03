@@ -10,14 +10,14 @@ fi
 Mode="Normal"
 
 MPN=0
-for i in $(df | awk '{ print $1 }')
+for i in $(df 2> /dev/null | awk '{ print $1 }')
 do
   MPN=$(( MPN + 1 ))
 done
 MPN=$(( MPN - 1 ))
 
-MP=$(df | awk '{ print $6 }')
-FST=$(df | awk '{ print $1 }')
+MP=$(df 2> /dev/null | awk '{ print $6 }')
+FST=$(df 2> /dev/null | awk '{ print $1 }')
 
 for i in $(seq $MPN)
 do
