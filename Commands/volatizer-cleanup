@@ -10,7 +10,7 @@ fi
 # Root check
 if [[ $(whoami) != "root" ]]
 then
-  echo 'This script needs to run as root! Please use "sudo" in front.'
+  echo "This script needs to run as root! Please use \"sudo\" in front."
   exit
 fi
 
@@ -28,27 +28,9 @@ function Execute
   done
   echo ""  
   echo "You may also wanna clear your browser's cache."
-  
-  echo ""
-  echo "Clearing logs"
-  rm -Rf /var/log/*.gz
-  for i in $(ls -p /var/log | grep -v / | grep log)
-  do
-    echo -n "" > /var/log/$i
-  done
-  for i in $(ls -p /var/log | grep -v / | grep dmesg)
-  do
-    echo -n "" > /var/log/$i
-  done
 
   echo ""
-  echo "Vacuuming journals"
-  journalctl --disk-usage
-  journalctl --vacuum-size=100M
-  echo ""
-
-  echo ""
-  echo "Removing old linux images headers and modules"
+  echo "Marking old linux images, headers and modules, and extras for removal"
   echo ""
   echo 'If you update your system regularly this may save lots of space... Each set of linux image and header can be quite large, and you only use 1 set. Another set is good to keep for backup. The rest can be removed.'
   echo "For safety reasons this process requires your utmost attention and approval as it is known to cause damage. If you're not sure about it, or see any issues with the marked images modules and headers, skip it or do it manually using apt-get purge, then run this script again skipping this step again to clean up after apt."
@@ -64,15 +46,21 @@ function Execute
     PLimg=$i
   done
   echo "Currently used linux image: $CLimg"
-  echo "Previous linux image: $PLimg"
-  if [[ $1 == '-a' ]]
+  if [[ ! -z $PLimg ]]
+  then
+    echo "Previous linux image: $PLimg"
+  fi
+  if [[ $1 == "-a" ]]
   then
     BreakAt=$CLimg
   else
-    BreakAt=$PLimg
+    if [[ ! -z $PLimg ]]
+    then
+      BreakAt=$PLimg
+    else
+      BreakAt=$CLimg
+    fi
   fi
-  echo ""
-  echo "The following linux images and header ware marked for removal:"
   for i in $ALimg
   do
     if [[ $i == $BreakAt ]]
@@ -100,55 +88,85 @@ function Execute
       Marked="$Marked $LModE"
     fi
   done
-  echo ''
-  for i in $Marked
-  do
-    echo $i
-  done
-  
-  if [[ $1 == "-a" && $(volatizer-mode) == "Normal" ]]
-  then
-    echo ""
-    echo "Warning! Option -a is specified. All unused images and headers will be removed, no backup will be kept!"
-  fi
   
   echo ""
-  if [[ $(volatizer-mode) != "Volatile" ]]
+  if [[ -z $Marked ]]
   then
-    read -t 60 -p "Do you want to remove them?" Yy
+    echo "Nothing to remove."
   else
-    echo "In volatile mode cleaning them up should do no harm. Removing all unused linux images, headers and modules..."
-    Yy="y"
+    echo "The following packages ware marked for removal:"
+    echo ""
+    for i in $Marked
+    do
+      echo $i
+    done
+  
+    if [[ $1 == "-a" && $(volatizer-mode) == "Normal" ]]
+    then
+      echo ""
+      echo "Warning! Option -a is specified. All unused images and headers will be removed, no backup will be kept!"
+    fi
+    
+    echo ""
+    if [[ $(volatizer-mode) != "Volatile" ]]
+    then
+      read -t 60 -p "Do you want to remove them? (y/n): " Yy
+    else
+      echo "In volatile mode cleaning them up should do no harm. Removing all unused linux images, headers and modules..."
+      Yy="y"
+    fi
+    if [[ $Yy == [Yy]* ]]
+    then
+        echo ""
+        echo ""
+        echo "Removing packages..."
+        apt-get -y purge $Marked
+    fi
   fi
-  if [[ $Yy == [Yy]* ]]
-  then
-      echo ''
-      echo ''
-      echo "Removing: $i linux-image and header"
-      apt-get -y purge $Marked
-  fi
+  echo ""
 
   echo "Executing apt-get autoremove, and apt-get clean. This cleans up dependencies of uninstalled packages, and clears apt cache."
   apt-get -y autoremove
   apt-get clean
-  echo ''
+  echo ""
   
   if [[ ! -z $(dpkg -l | grep snapd) ]]
   then
     volatizer-snapcleaner
   fi
   
-  echo 'Done!'
-  echo ''
-  echo ''
+  echo "Clearing logs"
+  rm -Rf /var/log/*.gz
+  rm -Rf /var/log/*.xz
+  rm -Rf /var/log/*/*.gz
+  rm -Rf /var/log/*/*.xz
+  # The next step renders the unarchived logs empty.
+  for i in $(ls -p /var/log | grep -v / | grep log)
+  do
+    echo -n "" > /var/log/$i
+  done
+  for i in $(ls -p /var/log | grep -v / | grep dmesg)
+  do
+    echo -n "" > /var/log/$i
+  done
+
+  echo ""
+  echo "Vacuuming journals"
+  journalctl --disk-usage
+  journalctl --vacuum-size=100M
+  echo ""
+  
+  echo "Done!"
+  echo ""
+  echo ""
 }
 
 # This will prevent regular users from permanently removing previous linux images and headers even though they can remove them in Volatile mode... (This script is executed at startup in Volatile mode automatically.)
 if [[ $(volatizer-mode) != "Volatile" ]]
 then
-  if [[ -z $(grep 'sudo' /etc/group | grep $SUDO_USER) ]]
+  if [[ -z $(grep "sudo" /etc/group | grep $SUDO_USER) ]]
   then
-    echo 'Sorry you are not in group "sudo", you can only execute this script in Volatile mode.'
+    echo "Sorry you are not in group \"sudo\", you can only execute this script in Volatile mode."
     sleep 5
     exit
   else

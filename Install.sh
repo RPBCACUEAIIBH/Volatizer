@@ -4,7 +4,7 @@
 # Volatizer                                                                    #
 ################################################################################
 #                                                                              #
-# Version 1.3                                                                  #
+# Version 1.3.1                                                                #
 # Written by: Tibor Áser Veres                                                 #
 # Source: https://github.com/RPBCACUEAIIBH/Volatizer                           #
 # License: BSD License 2.0 (see LICENSE.md file)                               #
@@ -76,6 +76,17 @@ sysctl vm.swappiness=0
 echo ''
 echo 'Done!'
 echo ''
+
+echo ""
+echo "Setting journald size limit, and storage to volatile"
+sed -i "s/$(grep "Storage=" "/etc/systemd/journald.conf")/Storage=volatile/g" "/etc/systemd/journald.conf" # <<< SSDs may thank me for that ;) I heard Tesla had some system logs killing EMMC issues.
+sed -i "s/$(grep "SystemMaxUse=" "/etc/systemd/journald.conf")/SystemMaxUse=50M/g" "/etc/systemd/journald.conf"
+sed -i "s/$(grep "RuntimeMaxUse=" "/etc/systemd/journald.conf")/RuntimeMaxUse=50M/g" "/etc/systemd/journald.conf"
+systemctl reload systemd-journald.service
+systemctl restart systemd-journald.service
+echo ""
+echo "Done!"
+echo ""
 
 echo ''
 echo 'Making changes to initramfs'
