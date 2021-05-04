@@ -19,7 +19,7 @@ then
 fi
 
 # Compatibility check (No need to echo anything, CompatibilityCheck.sh does that!)
-if [[ ! $Files/Scripts/check-compatibility.sh ]]
+if ! $Files/Scripts/check-compatibility.sh
 then
   exit 1
 fi

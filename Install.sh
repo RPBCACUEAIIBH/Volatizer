@@ -19,12 +19,12 @@ Files="/usr/share/Volatizer"
 ScriptPath="$(cd "$(dirname "$0")"; pwd -P)"
 cd $ScriptPath
 
-if [[ ! Scripts/check-compatibility.sh ]]
+if ! Scripts/check-compatibility.sh
 then
   exit
 fi
 
-if [[ ! Scripts/uninstall.sh ]] # Check for previous installation, and uninstall, if found.
+if ! Scripts/uninstall.sh # Check for previous installation, and uninstall, if found.
 then
   exit
 fi
