@@ -20,15 +20,56 @@ then
     echo 'Error: /etc/default/grub.old file missing.'
     Fail=true
   fi
+  # Kernel mod...
   #CAUTION! Do not restore the old one if it's getting uninstalld because it doesn't work, and it doesn't work because initramfs was updated... Keep the updated version!
-  if [[ -f /usr/share/initramfs-tools/scripts/local.old && ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) ]] # just a bit of foolproofing...
+  if [[ -f "/etc/kernel/postinst.d/zz-update-grub.old" ]]
   then
-    mv -f /usr/share/initramfs-tools/scripts/local.old /usr/share/initramfs-tools/scripts/local
-    update-initramfs -u
+    if [[ ! -z $(grep "volatizer mode" "/etc/kernel/postinst.d/zz-update-grub") ]]
+    then
+      mv -f "/etc/kernel/postinst.d/zz-update-grub.old" "/etc/kernel/postinst.d/zz-update-grub"
+    else
+      echo "Warning: Can't find Volatizer entry in /etc/kernel/postinst.d/zz-update-grub. Keeping it as it may have been replaced by a system update!"
+    fi
   else
-    echo 'Error: /usr/share/initramfs-tools/scripts/local.old file missing.'
+    echo "Error: /etc/kernel/postinst.d/zz-update-grub.old file missing. Can't properly remove Volatizer!"
     Fail=true
   fi
+  if [[ -f "/etc/kernel/postrm.d/zz-update-grub.old" ]]
+  then
+    if [[ ! -z $(grep "volatizer mode" "/etc/kernel/postrm.d/zz-update-grub") ]]
+    then
+      mv -f "/etc/kernel/postrm.d/zz-update-grub.old" "/etc/kernel/postrm.d/zz-update-grub"
+    else
+      echo "Warning: Can't find Volatizer entry in /etc/kernel/postrm.d/zz-update-grub. Keeping it as it may have been replaced by a system update!"
+    fi
+  else
+    echo "Warning: /etc/kernel/postrm.d/zz-update-grub.old file missing. Can't properly remove Volatizer!"
+    Fail=true
+  fi
+  # Initramfs mod...
+  #CAUTION! Do not restore the old one if it's getting uninstalld because it doesn't work, and it doesn't work because initramfs was updated... Keep the updated version!
+  if [[ -f "/usr/share/initramfs-tools/scripts/local.old" ]]
+  then
+    if [[ ! -z $(grep "### Volatizer modification starts ###" "/usr/share/initramfs-tools/scripts/local") ]]
+    then
+      mv -f "/usr/share/initramfs-tools/scripts/local.old" "/usr/share/initramfs-tools/scripts/local"
+      update-initramfs -u
+    else
+      echo "Warning: Can't find Volatizer entry in /usr/share/initramfs-tools/scripts/local. Keeping it as it may have been replaced by a system update!"
+    fi
+  else
+    echo "Error: /usr/share/initramfs-tools/scripts/local.old file missing. Can't properly remove Volatizer!"
+    Fail=true
+  fi
+  # Journal config mod...
+  if [[ -f "/etc/systemd/journald.conf.old" ]] # This is just a config file...
+  then
+    cp "/etc/systemd/journald.conf.old" "/etc/systemd/journald.conf"
+    systemctl restart systemd-journald.service
+  else
+    echo "Warning: /etc/systemd/journald.conf.old file missing."
+  fi
+  # Sudoers file
   if [[ -f /etc/sudoers.d/Volatizer-sudoers ]]
   then
     rm -f /etc/sudoers.d/Volatizer-sudoers
@@ -43,10 +84,12 @@ then
       fi
     fi
   done
+  # Junk left may be left at /
   if [[ -f /normalboot ]] # This may annoy people after reinstalling...
   then
     rm -f /normalboot
   fi
+  # Alert if fatal errors encountered
   if [[ $Fail == false ]]
   then
     echo ''
@@ -57,6 +100,7 @@ then
     echo "Oh crap! :S Fatal error(s) occured!"
     echo "SAVE ALL YOUR DATA AND MAKE A LIVE DISK BEFORE SHUTDOWN/REBOOT, CAUSE IT MAY OR MAY NOT BE ABLE TO REBOOT!"
   fi
+  # Fate of Volatizer Config
   echo ""
   read -t 7 -p "Do you want to remove personal volatizer configiration files for all users? (Only recommended if Volatizer won't be reinstalled. y/n) " Yy
   if [[ $Yy == [Yy]* ]]
@@ -70,6 +114,7 @@ then
     done
   fi
   echo ""
+  #Delete files
   # This is basically it's self destruct sequence... Therefore deleting itself must be the last thing it does...
   # (Shell does not load the entire script into memory before execution, only the current block of code, thus it may never get further then this if statement if it's deleted before the rest of it is done.)
   if [[ -d $Files ]]

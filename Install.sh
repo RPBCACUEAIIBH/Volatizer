@@ -4,7 +4,7 @@
 # Volatizer                                                                    #
 ################################################################################
 #                                                                              #
-# Version 1.3.1                                                                #
+# Version 1.4                                                                  #
 # Written by: Tibor Áser Veres                                                 #
 # Source: https://github.com/RPBCACUEAIIBH/Volatizer                           #
 # License: BSD License 2.0 (see LICENSE.md file)                               #
@@ -19,12 +19,12 @@ Files="/usr/share/Volatizer"
 ScriptPath="$(cd "$(dirname "$0")"; pwd -P)"
 cd $ScriptPath
 
-if ! Scripts/check-compatibility.sh
+if [[ ! Scripts/check-compatibility.sh ]]
 then
   exit
 fi
 
-if ! Scripts/uninstall.sh # Check for previous installation, and uninstall, if found.
+if [[ ! Scripts/uninstall.sh ]] # Check for previous installation, and uninstall, if found.
 then
   exit
 fi
@@ -52,7 +52,7 @@ if [[ $Yy != "Yes" ]]
 then
   echo 'Agreement >> Failed!'
   echo ''
-  exit
+  exit 1
 else
   echo 'Agreement >> OK'
   echo ''
@@ -79,18 +79,22 @@ echo ''
 
 echo ""
 echo "Setting journald size limit, and storage to volatile"
+cp "/etc/systemd/journald.conf" "/etc/systemd/journald.conf.old"
 sed -i "s/$(grep "Storage=" "/etc/systemd/journald.conf")/Storage=volatile/g" "/etc/systemd/journald.conf" # <<< SSDs may thank me for that ;) I heard Tesla had some system logs killing EMMC issues.
 sed -i "s/$(grep "SystemMaxUse=" "/etc/systemd/journald.conf")/SystemMaxUse=50M/g" "/etc/systemd/journald.conf"
 sed -i "s/$(grep "RuntimeMaxUse=" "/etc/systemd/journald.conf")/RuntimeMaxUse=50M/g" "/etc/systemd/journald.conf"
-systemctl reload systemd-journald.service
 systemctl restart systemd-journald.service
 echo ""
 echo "Done!"
 echo ""
 
-echo ''
-echo 'Making changes to initramfs'
-Scripts/modify-initramfs.sh
+echo ""
+echo "Making changes to kernel"
+"Scripts/modify-initramfs.sh"
+
+echo ""
+echo "Making changes to initramfs"
+"Scripts/modify-initramfs.sh"
 
 echo ''
 echo 'Copying shared files' ################################################################# This is a danger zone #######################################################################
@@ -145,8 +149,8 @@ echo ''
 
 echo ''
 echo 'Finalizing modification...'
-update-grub
 update-initramfs -u
+update-grub
 echo ''
 echo 'Done!'
 echo ''

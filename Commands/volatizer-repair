@@ -18,28 +18,48 @@ then
   exit
 fi
 
-if [[ ! -z $(grep '### Volatizer modification starts ###' /usr/share/initramfs-tools/scripts/local) ]]
+# Compatibility check (No need to echo anything, CompatibilityCheck.sh does that!)
+if [[ ! $Files/Scripts/check-compatibility.sh ]]
+then
+  exit 1
+fi
+
+echo ""
+echo "Checking kernel..."
+if [[ ! -z $(grep "volatizer mode" "/etc/kernel/postinst.d/zz-update-grub") && ! -z $(grep "volatizer mode" "/etc/kernel/postrm.d/zz-update-grub") ]]
 then
   echo ""
   echo "No problem detected!"
   echo ""
 else
   echo ""
-  echo "Can't find Volatizer entry in initramfs! This may be due to an update of initramfs overwriting the modified file. Attempting to repair it..."
-  if  ! $Files/Scripts/check-compatibility.sh
-  then
-    exit
-  fi
-  
-  echo ''
-  echo 'Making changes to initramfs'
-  $Files/Scripts/modify-initramfs.sh
-  
-  echo ''
-  echo 'Finalizing modification...'
-  update-grub
+  echo "Can't find Volatizer entry in kernel! This may be due to an update overwriting the modified files. Attempting to repair it..."
+  echo ""
+  echo "Making changes to kernel"
+  "$Files/Scripts/modify-kernel.sh"
+  echo ""
+  echo "Done!"
+  echo ""
+fi
+
+echo ""
+echo "Checking initramfs..."
+if [[ ! -z $(grep "### Volatizer modification starts ###" "/usr/share/initramfs-tools/scripts/local") ]]
+then
+  echo ""
+  echo "No problem detected!"
+  echo ""
+else
+  echo ""
+  echo "Can't find Volatizer entry in initramfs! This may be due to an update overwriting the modified file. Attempting to repair it..."
+  echo ""
+  echo "Making changes to initramfs"
+  "$Files/Scripts/modify-initramfs.sh"
+  echo ""
+  echo "Finalizing modification..."
   update-initramfs -u
-  echo ''
-  echo 'Done!'
-  echo ''
+  update-grub
+  echo ""
+  echo "Done!"
+  echo ""
 fi

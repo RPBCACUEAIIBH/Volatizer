@@ -26,8 +26,8 @@ Disadvantages:
 - RAM is called volatile memory for good reason! In volatile mode: 1. If the power goes out, and you have no UPS or the battery dies you loose data instantly! 2. If you forget to save it before shutdown or reboot your data is gone for good! (That's where the save, autosave and backup functions come in handy... use them carefully!)
 
 Known issues and workarounds:
-- You will get all sorts of erros and warnings if trying to update install things in volatile mode, telling you to prepare for apocalipse... Don't panic! Ubuntu wansn't exactly designed to run in RAM (tmpfs) without protest... ;) You'll be just fine as the data on system partition will be discarded upon shutdown/reboot anyway. Even if you run the save script, only your home folder will be saved(with everything in it.), but nothing from the system partition... So ignore those warnings and errors...
 - If your PC fails to boot into volatile mode, try normal mode... If it runs out of RAM it won't boot, since the swap is mounted after the root partition, which means that even if you're able to overfill it during normal use, swap space is useless for Volatizer! Solution: Boot into normal mode, run volatizer cleanup to get rid of the junk, move some of your data to another partition, uninstall what you don't need and thus make it smaller, then try again booting in volatile mode! (Be aware that other users can also fill up the system partition quickly causing it to not boot into volatile mode! Use disk usage analyser to find out why you don't have enough space. Ubuntu should have it installed by default! ...Or get more RAM. :D)
+- If you inster a USB stick, or mount a drive you may have access issues in volatile mode. There is 2 way around that: 1. Take ownership of the drive each time you mount it. 2. In normal mode unmount every drive with access issues, make folders for them, take ownership of the folders, and set the folders as mount point for the drives in /etc/fstab, so that next time you boot into volatile mode, and mount them, they automatically get mounted to a folder you already own.
 - Some snaps refuse to work in volatile mode... It's a pain in the ass, but you have to use those in normal mode, so if it's available install it using apt-get rather then snap.
 - Clearing snap cache can prevent package removal by "snap remove" command! Unfortunately the cache can occupy GBs. If that happens, you can break the package, and then uninstall it by:
   A) using "df -ah" command to find out the package's filesystem, then "sudo umount /dev/loopXX" (where XX is a number). Each active snap has one...
@@ -35,6 +35,7 @@ Known issues and workarounds:
   c) using "snap remove --purge package-name" to remove the broken package.
 
 Fixed issues:
+- You will get all sorts of erros and warnings if trying to update install things in volatile mode, telling you to prepare for apocalipse... Don't panic! Ubuntu wansn't exactly designed to run in RAM (tmpfs) without protest... ;) You'll be just fine as the data on system partition will be discarded upon shutdown/reboot anyway. This was fixed in v1.4.
 - When creating new human user, you also had to create a .Volatizer folder in his/her home folder, place a copy of the volatizer config file within it, configure it, and optionally make it owned by him/her... This was made easy in v1.2 by "volatizer newuser". (Run it with --help option for more information.) The Install script also detects, and runs this for each existing user. (I forgot to announce that it was fixed earlier...)
 
 Supported distros(Volatizer for these are all tested and working):
@@ -86,6 +87,9 @@ Update plans:
 - Clean up the code keep it basic but powerful, with some optional features. (v2.0) Some of this is already done in v1.2 and after.
 - Initial step by step setup. (v2.0)
 - Logging - Curently none of volatizer files are logging anything... (v2.0)
+
+Version 1.4:
+- Introduced some kernel mod, disabled update-grub when running apt-get upgrade in volatile mode. It can't find canonical path for "tmpfs", and every time it throws that error, it caused apt to fail... (any modification to grub in volatile mode would be discarded at shutdown/reboot anyway...)
 
 Version 1.3.1:
 - Improved cleanup and snapcleaner scripts, made it faster in case there's nothing to clean, now it no longer asks if you wanna celan up something when there's nothing to clean up.

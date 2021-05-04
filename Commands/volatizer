@@ -4,7 +4,7 @@
 # Volatizer                                                                    #
 ################################################################################
 #                                                                              #
-# Version 1.3.1                                                                #
+# Version 1.4                                                                  #
 # Written by: Tibor Áser Veres                                                 #
 # Source: https://github.com/RPBCACUEAIIBH/Volatizer                           #
 # License: BSD License 2.0 (see LICENSE.md file)                               #
@@ -69,7 +69,7 @@ case $1 in
      vboot ) sudo volatizer-bootmode -v
              ;;
  --version ) echo ''
-             echo 'Volatizer - Version 1.3.1'
+             echo 'Volatizer - Version 1.4'
              echo ''
              cat /usr/share/Volatizer/LICENSE.md
              echo ''

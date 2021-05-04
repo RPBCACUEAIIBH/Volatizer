@@ -3,7 +3,9 @@
 # This script is not meant to be ran as a stand alone script, it's called by the Install.sh and volatizer-repair. (not standalone)
 
 ### Execution ###
-cp /usr/share/initramfs-tools/scripts/local /usr/share/initramfs-tools/scripts/local.old
+echo ""
+echo "Changing the way root is mounted..."
+cp "/usr/share/initramfs-tools/scripts/local" "/usr/share/initramfs-tools/scripts/local.old"
 if [[ ! -z $(cat /etc/*-release | grep "Debian GNU/Linux") ]] # Debian
 then
 L0='        '
@@ -120,6 +122,7 @@ L27='        ### End of Volatizer modifications ###'
 L28='        '
 sed -i "/mount \${roflag} \${FSTYPE:+-t \${FSTYPE} }\${ROOTFLAGS} \${ROOT} \${rootmnt}/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18\n$L19\n$L20\n$L21\n$L22\n$L23\n$L24\n$L25\n$L26\n$L27\n$L28" /usr/share/initramfs-tools/scripts/local
 fi
+
 echo ''
 echo 'Done!'
 echo ''
