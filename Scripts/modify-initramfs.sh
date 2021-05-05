@@ -53,7 +53,8 @@ L41='        esac'
 L42='        if [[ $MountFail == true ]]'
 L43='        then'
 L44='        ### End of Volatizer modifications ###'
-sed -i "/if ! mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"; then/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18\n$L19\n$L20\n$L21\n$L22\n$L23\n$L24\n$L25\n$L26\n$L27\n$L28\n$L29\n$L30\n$L31\n$L32\n$L33\n$L34\n$L35\n$L36\n$L37\n$L38\n$L39\n$L40\n$L41\n$L42\n$L43\n$L44" /usr/share/initramfs-tools/scripts/local
+L45='        '
+sed -i "/if ! mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"; then/ c\\$L0\n$L1\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L16\n$L17\n$L18\n$L19\n$L20\n$L21\n$L22\n$L23\n$L24\n$L25\n$L26\n$L27\n$L28\n$L29\n$L30\n$L31\n$L32\n$L33\n$L34\n$L35\n$L36\n$L37\n$L38\n$L39\n$L40\n$L41\n$L42\n$L43\n$L44\n$L45" /usr/share/initramfs-tools/scripts/local
 
 elif [[ ! -z $(grep 'mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"' /usr/share/initramfs-tools/scripts/local) ]] # Ubuntu 20.04+
 then
@@ -88,7 +89,8 @@ L27='                  fi'
 L28='                  ;;'
 L29='        esac'
 L30='        ### End of Volatizer modifications ###'
-sed -i "/mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"/ c\\$L0\n$L1\n$L2\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L15\n$L16\n$L17\n$L18\n$L19\n$L20\n$L21\n$L15\n$L15\n$L22\n$L23\n$L24\n$L25\n$L26\n$L27\n$L28\n$L29\n$L30" /usr/share/initramfs-tools/scripts/local
+L31='        '
+sed -i "/mount \${roflag} \${FSTYPE:+-t \"\${FSTYPE}\"} \${ROOTFLAGS} \"\${ROOT}\" \"\${rootmnt?}\"/ c\\$L0\n$L1\n$L2\n$L2\n$L3\n$L4\n$L5\n$L6\n$L7\n$L8\n$L9\n$L10\n$L11\n$L12\n$L13\n$L14\n$L15\n$L15\n$L16\n$L17\n$L18\n$L19\n$L20\n$L21\n$L15\n$L15\n$L22\n$L23\n$L24\n$L25\n$L26\n$L27\n$L28\n$L29\n$L30\n$L31" /usr/share/initramfs-tools/scripts/local
 
 else # Earlier Ubuntu/Mint
 L0='        '

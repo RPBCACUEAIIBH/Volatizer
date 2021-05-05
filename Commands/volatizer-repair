@@ -26,7 +26,7 @@ fi
 
 echo ""
 echo "Checking kernel..."
-if [[ ! -z $(grep "volatizer mode" "/etc/kernel/postinst.d/zz-update-grub") && ! -z $(grep "volatizer mode" "/etc/kernel/postrm.d/zz-update-grub") ]]
+if [[ ! -z $(grep "volatizer" "/etc/kernel/postinst.d/zz-update-grub") && ! -z $(grep "volatizer" "/etc/kernel/postrm.d/zz-update-grub") ]]
 then
   echo ""
   echo "No problem detected!"

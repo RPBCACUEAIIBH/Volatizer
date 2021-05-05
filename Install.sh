@@ -90,7 +90,7 @@ echo ""
 
 echo ""
 echo "Making changes to kernel"
-"Scripts/modify-initramfs.sh"
+"Scripts/modify-kernel.sh"
 
 echo ""
 echo "Making changes to initramfs"
