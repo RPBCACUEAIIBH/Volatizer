@@ -16,7 +16,7 @@ then
     sed -i "/#\! \/bin\/sh/ c\#\! \/bin\/sh\nif [ \$(volatizer mode) = \"Normal\" ]\nthen\n" "/etc/kernel/postinst.d/zz-update-grub"
     echo "" >> "/etc/kernel/postinst.d/zz-update-grub"
     echo "else" >> "/etc/kernel/postinst.d/zz-update-grub"
-    echo "echo \"Volatizer: update-grub is disabled in volatile mode\!\"" >> "/etc/kernel/postinst.d/zz-update-grub"
+    echo 'echo "Volatizer: update-grub is disabled in volatile mode!"' >> "/etc/kernel/postinst.d/zz-update-grub"
     echo "exit 0" >> "/etc/kernel/postinst.d/zz-update-grub"
     echo "fi" >> "/etc/kernel/postinst.d/zz-update-grub"
   fi
@@ -33,7 +33,7 @@ then
     sed -i "/#\! \/bin\/sh/ c\#\! \/bin\/sh\nif [ \$(volatizer mode) = \"Normal\" ]\nthen\n" "/etc/kernel/postrm.d/zz-update-grub"
     echo "" >> "/etc/kernel/postrm.d/zz-update-grub"
     echo "else" >> "/etc/kernel/postrm.d/zz-update-grub"
-    echo "echo \"Volatizer: update-grub is disabled in volatile mode\!\"" >> "/etc/kernel/postrm.d/zz-update-grub"
+    echo 'echo "Volatizer: update-grub is disabled in volatile mode!"' >> "/etc/kernel/postrm.d/zz-update-grub"
     echo "exit 0" >> "/etc/kernel/postrm.d/zz-update-grub"
     echo "fi" >> "/etc/kernel/postrm.d/zz-update-grub"
   fi
